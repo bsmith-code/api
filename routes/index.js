@@ -6,7 +6,7 @@ const morgan = require('morgan')
 const path = require('path')
 const chatRoutes = require('./chat')
 
-const PORT = process.env.PORT || 8081
+const PORT = process.env.PORT || 8080
 
 app.use(cookieParser())
 app.use(bodyParser.json())
@@ -19,9 +19,9 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'),
 app.use(morgan('combined', { stream: accessLogStream }))
 
 // add service routes here
-app.use('/business', chatRoutes)
+app.use('/chat', chatRoutes)
 app.get('/', async (_, res) => {
-  res.status(200).json({ message: 'Welcome to the INE Gateway.' })
+  res.status(200).json({ message: 'Welcome to the API Gateway.' })
 })
 
 app.listen(PORT)

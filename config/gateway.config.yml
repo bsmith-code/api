@@ -1,5 +1,5 @@
 http:
-  port: ${GATEWAY_PORT:-3000}
+  port: ${GATEWAY_PORT:-3001}
   hostname: ${HOSTNAME:-localhost}
 apiEndpoints:
   chatAPI:
@@ -7,7 +7,7 @@ apiEndpoints:
     paths: '/chat*'
 serviceEndpoints:
   chatService:
-    url: 'https://${HOSTNAME:-localhost}:${ROUTING_PORT:-8081}/chat'
+    url: 'https://${HOSTNAME:-localhost}:${ROUTING_PORT:-8080}/chat'
 policies:
   - basic-auth
   - cors
