@@ -1,15 +1,13 @@
 http:
-  port: 8080
-admin:
-  port: 9876
-  host: localhost
+  port: ${GATEWAY_PORT:-3000}
+  hostname: ${HOSTNAME:-localhost}
 apiEndpoints:
-  api:
-    host: localhost
-    paths: '/ip'
+  chatAPI:
+    host: '*'
+    paths: '/chat*'
 serviceEndpoints:
-  httpbin:
-    url: 'https://httpbin.org'
+  chatService:
+    url: 'https://${HOSTNAME:-localhost}:${ROUTING_PORT:-8081}/chat'
 policies:
   - basic-auth
   - cors
@@ -20,13 +18,21 @@ policies:
   - proxy
   - rate-limit
 pipelines:
-  default:
+  chat:
     apiEndpoints:
-      - api
+      - chatAPI
     policies:
-    # Uncomment `key-auth:` when instructed to in the Getting Started guide.
-    # - key-auth:
+      - cors:
+        -
+          action:
+            credentials: true
+            origin: true
+            allowedHeaders: ['Accept', Content-Type, 'Cookie']
+            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE'
+            preflightContinue: false
+            optionsSuccessStatus: 204
       - proxy:
           - action:
-              serviceEndpoint: httpbin 
+              serviceEndpoint: chatService
               changeOrigin: true
+              stripPath: true

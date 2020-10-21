@@ -1,11 +1,29 @@
 {
-  "name": "api.brianmatthewsmith.com",
-  "description": "Express Gateway Instance Bootstraped from Command Line",
+  "name": "api-gateway.brianmatthewsmith.com",
+  "description": "Express Gateway",
   "repository": {},
-  "license": "UNLICENSED",
+  "license": "Brian Matthew Smith",
   "version": "1.0.0",
   "main": "server.js",
   "dependencies": {
-    "express-gateway": "^1.16.10"
+    "express-gateway": "^1.16.10",
+    "axios": "^0.19.2",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jwt-decode": "^2.2.0",
+    "moment": "^2.27.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0 || ^6.1.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-prettier": "^3.1.2",
+    "nodemon": "^2.0.2",
+    "prettier": "^1.19.1"
   }
 }
