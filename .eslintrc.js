@@ -10,5 +10,6 @@ module.exports = {
     'camelcase': 0,
     'no-console': 0,
     'no-param-reassign': 0,
+    'array-callback-return': 0
   }
 }
