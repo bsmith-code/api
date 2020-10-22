@@ -1,0 +1,18 @@
+defaultEntryPoints = ["websecure", "web"]
+
+[entryPoints]
+  [entryPoints.web]
+    address = ":80"
+  [entryPoints.websecure]
+    address = ":443"
+
+[api]
+  insecure = true
+  dashboard = true
+
+[providers]
+  [providers.file]
+    filename = "/dynamic_conf.toml"
+  [providers.docker]
+    exposedByDefault = false
+    endpoint = "unix:///var/run/docker.sock"

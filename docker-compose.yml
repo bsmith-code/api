@@ -1,0 +1,49 @@
+version: "3.7"
+
+services:
+  traefik:
+    image: traefik:2.2
+    networks:
+      - default
+      - traefik
+    ports:
+      - 8080:8080
+      - 80:80
+      - 443:443
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.toml:/traefik.toml
+
+  gateway:
+    depends_on:
+      - traefik
+    build: .
+    container_name: api-brianmatthewsmith-com
+    volumes:
+      - .:/api-gateway
+      - /api-gateway/node_modules
+    restart:
+      always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.gateway.loadbalancer.server.port=8081"
+      - "traefik.http.routers.gateway.rule=Host(`api.brianmatthewsmith.test`)"
+      - "traefik.http.routers.gateway.entrypoints=web"
+      - "traefik.http.routers.gateway.tls=false"
+      - "traefik.http.middlewares.corsHeaders.headers.accesscontrolallowmethods=GET,POST,PUT,PATCH,DELETE,OPTIONS"
+      - "traefik.http.middlewares.corsHeaders.headers.accesscontrolallowheaders=Authorization,Origin,Content-Type,Accept"
+      - "traefik.http.middlewares.corsHeaders.headers.accesscontrolalloworigin=origin-list-or-null"
+      - "traefik.http.middlewares.corsHeaders.headers.accesscontrolallowcredentials=true"
+      - "traefik.http.middlewares.corsHeaders.headers.accesscontrolmaxage=100"
+      - "traefik.http.middlewares.corsHeaders.headers.addvaryheader=true"
+      - "traefik.http.middlewares.corsHeaders.headers.accesscontrolalloworiginlist=http://localhost:8080, http://localhost:8081"
+      - "traefik.http.routers.gateway.middlewares=corsHeaders"
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge
+  traefik:
+    internal: false

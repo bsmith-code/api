@@ -5,13 +5,9 @@ const fs = require('fs')
 const morgan = require('morgan')
 const path = require('path')
 const chatRoutes = require('./chat')
-const db = require('./app/models')
+const db = require('./models')
 
 const PORT = process.env.PORT || 8080
-
-db.sequelize.sync({ force: true }).then(() => {
-  console.log('Drop and re-sync db.')
-})
 
 app.use(cookieParser())
 app.use(bodyParser.json())
@@ -29,6 +25,9 @@ app.get('/', async (_, res) => {
   res.status(200).json({ message: 'Welcome to the API Gateway.' })
 })
 
-app.listen(PORT)
+db.sequelize.sync({ force: true }).then(() => {
+  console.log('Drop and re-sync db.')
+  app.listen(PORT)
+})
 
 module.exports = app

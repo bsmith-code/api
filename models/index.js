@@ -25,11 +25,4 @@ Object.keys(config.databases).map(name => {
   })
 })
 
-/** Add Databases* */
-// for (let i = 0; i < databases.length; ++i) {
-//   const database = databases[i]
-//   const dbPath = config.databases[database]
-//   db[database] = new Sequelize(dbPath.database, dbPath.username, dbPath.password, dbPath)
-// }
-
 module.exports = db
