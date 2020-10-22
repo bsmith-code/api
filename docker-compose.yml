@@ -19,7 +19,7 @@ services:
     depends_on:
       - traefik
     build: .
-    container_name: api-brianmatthewsmith-com
+    container_name: api-gateway
     volumes:
       - .:/api-gateway
       - /api-gateway/node_modules

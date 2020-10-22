@@ -5,9 +5,9 @@ const fs = require('fs')
 const morgan = require('morgan')
 const path = require('path')
 const chatRoutes = require('./chat')
-const db = require('./models')
+const db = require('../models')
 
-const PORT = process.env.PORT || 8080
+const PORT = process.env.ROUTING_PORT || 8080
 
 app.use(cookieParser())
 app.use(bodyParser.json())
