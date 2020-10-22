@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "serve": "npm run start & nodemon ./routes/index.js"
+    "serve": "nodemon -r dotenv/config ./routes/index.js dotenv_config_path=./.env"
   },
   "dependencies": {
     "axios": "^0.19.2",

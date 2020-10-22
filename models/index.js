@@ -1,7 +1,13 @@
 const Sequelize = require('sequelize')
+const { readdirSync, lstatSync } = require('fs')
+const { join } = require('path')
 const config = require('../config/db.config.js')
 
+const models = readdirSync('./models').filter(folder =>
+  lstatSync(join('./models', folder)).isDirectory()
+)
 const db = {}
+
 Object.keys(config.databases).map(name => {
   const {
     database,
@@ -15,7 +21,6 @@ Object.keys(config.databases).map(name => {
   db[name] = new Sequelize(database, username, password, {
     host,
     dialect,
-    operatorsAliases: false,
     pool: {
       max,
       min,
@@ -23,6 +28,14 @@ Object.keys(config.databases).map(name => {
       idle
     }
   })
+})
+
+models.map(name => {
+  const database = db[name]
+  const model = join(`${__dirname}/${name}`, 'index.js')
+  database.models = {
+    ...require(model)(database, Sequelize)
+  }
 })
 
 module.exports = db

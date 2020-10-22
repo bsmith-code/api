@@ -1,5 +1,5 @@
-module.exports = (sequelize, { DataTypes }) =>
-  sequelize.define(
+module.exports = (seq, { DataTypes }) =>
+  seq.define(
     'User',
     {
       firstName: {

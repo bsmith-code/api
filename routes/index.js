@@ -5,10 +5,9 @@ const fs = require('fs')
 const morgan = require('morgan')
 const path = require('path')
 const chatRoutes = require('./chat')
-const db = require('../models')
 
 const PORT = process.env.ROUTING_PORT || 8080
-
+console.log('PROCESS', process.env.CHAT_DB_NAME)
 app.use(cookieParser())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -25,9 +24,6 @@ app.get('/', async (_, res) => {
   res.status(200).json({ message: 'Welcome to the API Gateway.' })
 })
 
-db.sequelize.sync({ force: true }).then(() => {
-  console.log('Drop and re-sync db.')
-  app.listen(PORT)
-})
+app.listen(PORT)
 
 module.exports = app

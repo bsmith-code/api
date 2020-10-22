@@ -10,6 +10,8 @@ module.exports = {
     'camelcase': 0,
     'no-console': 0,
     'no-param-reassign': 0,
+    'global-require': 0,
+    'import/no-dynamic-require': 0,
     'array-callback-return': 0
   }
 }
