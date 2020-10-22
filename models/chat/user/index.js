@@ -1,7 +1,12 @@
-module.exports = (seq, { DataTypes }) =>
+module.exports = (seq, { DataTypes, UUIDV4 }) =>
   seq.define(
     'User',
     {
+      id: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+        defaultValue: UUIDV4
+      },
       firstName: {
         type: DataTypes.STRING,
         allowNull: false
@@ -14,10 +19,14 @@ module.exports = (seq, { DataTypes }) =>
         type: DataTypes.STRING,
         allowNull: false
       },
-      password: DataTypes.STRING,
-      allowNull: false
+      username: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false
+      }
     },
-    {
-      // Other model options go here
-    }
+    {}
   )

@@ -44,7 +44,7 @@ services:
       always
     labels:
       - "traefik.enable=true"
-      - "traefik.http.services.gateway.loadbalancer.server.port=8081"
+      - "traefik.http.services.gateway.loadbalancer.server.port=8080"
       - "traefik.http.routers.gateway.rule=Host(`api.brianmatthewsmith.test`)"
       - "traefik.http.routers.gateway.entrypoints=web"
       - "traefik.http.routers.gateway.tls=false"

@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "serve": "nodemon -r dotenv/config ./routes/index.js dotenv_config_path=./.env"
+    "serve": "npm run start & nodemon -r dotenv/config ./routes/index.js dotenv_config_path=./.env"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -20,7 +20,8 @@
     "moment": "^2.27.0",
     "morgan": "^1.10.0",
     "mysql2": "^2.2.5",
-    "sequelize": "^6.3.5"
+    "sequelize": "^6.3.5",
+    "bcryptjs": "^2.4.3"
   },
   "devDependencies": {
     "eslint": "^5.16.0 || ^6.1.0",

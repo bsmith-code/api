@@ -7,7 +7,7 @@ const path = require('path')
 const chatRoutes = require('./chat')
 
 const PORT = process.env.ROUTING_PORT || 8080
-console.log('PROCESS', process.env.CHAT_DB_NAME)
+
 app.use(cookieParser())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))

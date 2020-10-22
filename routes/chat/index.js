@@ -1,10 +1,10 @@
 const router = require('express').Router()
-const db = require('../../models')
+const { chat } = require('../../models')
 router.use('/login', require('./login'))
 router.use('/logout', require('./logout'))
 router.use('/register', require('./register'))
 
-db.chat
+chat
   .sync({ force: true })
   .then(() => {
     console.log('Drop and re-sync db.')
