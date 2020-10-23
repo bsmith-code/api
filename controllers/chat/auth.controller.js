@@ -4,7 +4,7 @@ const randToken = require('rand-token')
 
 const { setTokens, clearTokens } = require('../../helpers/handleTokens')
 const {
-  Sequelize: Op,
+  Sequelize: { Op },
   chat: {
     models: { User }
   }
@@ -15,8 +15,7 @@ exports.register = async (req, res) => {
     const {
       body: { firstName, lastName, username, email, password }
     } = req
-    const query = Op.or({ username }, { email })
-    const matchedUsers = await User.findAll(query)
+    const matchedUsers = await User.findAll({ where: { [Op.or]: { username, email } } })
 
     if (!matchedUsers.length) {
       const passwordHash = bcrypt.hashSync(password, 10)
@@ -36,9 +35,9 @@ exports.register = async (req, res) => {
       })
     }
     return res.status(401).send({ message: 'Username or email unavailable.' })
-  } catch (error) {
-    console.log(error)
-    throw error
+  } catch (err) {
+    res.status(500).send({ message: err.message })
+    throw err
   }
 }
 
@@ -75,21 +74,26 @@ exports.login = async (req, res) => {
       lastName: user.lastName,
       username: user.username
     })
-  } catch (error) {
-    console.log(error)
-    throw error
+  } catch (err) {
+    res.status(500).send({ message: err.message })
+    throw err
   }
 }
 
 exports.logout = async (req, res) => {
-  const {
-    cookies: { access_token: access, refresh_token: refresh }
-  } = req
+  try {
+    const {
+      cookies: { access_token: access, refresh_token: refresh }
+    } = req
 
-  if (access && refresh) {
-    clearTokens(res)
-    return res.status(200)
+    if (access && refresh) {
+      clearTokens(res)
+      return res.status(200)
+    }
+
+    return res.status(401)
+  } catch (err) {
+    res.status(500).send({ message: err.message })
+    throw err
   }
-
-  return res.status(401)
 }

@@ -18,12 +18,17 @@ const cookieOptions = {
   sameSite: 'Strict'
 }
 
-exports.setTokens = (accessToken, refreshToken, res) => {
+const setTokens = (accessToken, refreshToken, res) => {
   res.cookie('access_token', accessToken, cookieOptions)
   res.cookie('refresh_token', refreshToken, cookieOptions)
 }
 
-exports.clearTokens = res => {
+const clearTokens = res => {
   res.cookie('access_token', '', { ...cookieOptions, maxAge: -1 })
   res.cookie('refresh_token', '', { ...cookieOptions, maxAge: -1 })
+}
+
+module.exports = {
+  setTokens,
+  clearTokens
 }
