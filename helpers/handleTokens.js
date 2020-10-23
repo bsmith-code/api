@@ -1,3 +1,19 @@
+const jwt = require('jsonwebtoken')
+const dayjs = require('dayjs')
+
+const checkToken = accessToken => {
+  let isExpired = false
+
+  if (accessToken) {
+    const { exp: expireTime } = jwt.decode(accessToken)
+    const currentTime = dayjs().unix() + 600
+
+    isExpired = expireTime <= currentTime
+  }
+
+  return isExpired
+}
+
 const getDomain = () => {
   const env = process.env.ENVIRONMENT
   const envMapper = {
@@ -28,7 +44,45 @@ const clearTokens = res => {
   res.cookie('refresh_token', '', { ...cookieOptions, maxAge: -1 })
 }
 
+const refreshToken = async (req, res) => {
+  let request = {}
+  const {
+    cookies: { access_token: access, refresh_token: refresh }
+  } = req
+
+  if (access && access.length) {
+    const isExpired = checkToken(access)
+
+    if (isExpired) {
+      const { Bearer, Refresh } = await postRefreshToken({ access, refresh })
+      setTokens(Bearer, Refresh, res)
+      request = {
+        ...req,
+        headers: {
+          ...req.headers,
+          Authorization: `Bearer ${Bearer}`
+        }
+      }
+    } else {
+      request = {
+        ...req,
+        headers: {
+          ...req.headers,
+          Authorization: `Bearer ${access}`
+        }
+      }
+    }
+  } else {
+    request = {
+      ...req
+    }
+  }
+
+  return request
+}
+
 module.exports = {
   setTokens,
-  clearTokens
+  clearTokens,
+  refreshToken
 }

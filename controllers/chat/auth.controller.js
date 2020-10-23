@@ -1,12 +1,13 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const randToken = require('rand-token')
+const dayjs = require('dayjs')
 
 const { setTokens, clearTokens } = require('../../helpers/handleTokens')
 const {
   Sequelize: { Op },
   chat: {
-    models: { User }
+    models: { User, Token }
   }
 } = require('../../models')
 
@@ -56,17 +57,28 @@ exports.login = async (req, res) => {
       return res.status(401).send({ message: 'Invalid username or password.' })
     }
 
-    const passwordIsValid = bcrypt.compareSync(password, user.password)
-
-    if (!passwordIsValid) {
+    const isPassValid = bcrypt.compareSync(password, user.password)
+    if (!isPassValid) {
       return res.status(401).send({ message: 'Invalid username or password.' })
     }
 
-    const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: 86400 // 24 hours
-    })
+    const accessToken = jwt.sign(
+      {
+        id: user.id
+      },
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: 86400 // 24 hours
+      }
+    )
     const refreshToken = randToken.uid(256)
+
     setTokens(accessToken, refreshToken, res)
+    await Token.create({
+      userId: user.id,
+      refreshToken,
+      expireDate: dayjs().add(14, 'day')
+    })
 
     return res.json({
       id: user.id,
@@ -82,18 +94,12 @@ exports.login = async (req, res) => {
 
 exports.logout = async (req, res) => {
   try {
-    const {
-      cookies: { access_token: access, refresh_token: refresh }
-    } = req
-
-    if (access && refresh) {
-      clearTokens(res)
-      return res.status(200)
-    }
-
-    return res.status(401)
+    clearTokens(res)
+    return res.status(200)
   } catch (err) {
     res.status(500).send({ message: err.message })
     throw err
   }
 }
+
+exports.refreshToken = async (req, res) => {}
