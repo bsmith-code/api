@@ -38,4 +38,6 @@ models.map(name => {
   }
 })
 
+db.Sequelize = Sequelize
+
 module.exports = db
