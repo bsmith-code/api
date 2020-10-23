@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken')
 const {
   Sequelize: { Op },
   chat: {
@@ -7,9 +8,11 @@ const {
 
 exports.create = async (req, res) => {
   const {
-    // cookie: { access_token },
+    cookies: { access_token },
     body: { message, roomId, userIds }
   } = req
+
+  const { id: userId } = jwt.decode(access_token)
 
   if (!userIds.length) {
     return res.status(401).send({ message: 'Invalid recipient(s).' })
@@ -30,7 +33,7 @@ exports.create = async (req, res) => {
   const messageObj = await Message.create({
     message,
     roomId: roomId || room.id,
-    userId: '8acd58f3-6dc3-424a-8300-8ba2aae39e3b'
+    userId
   })
 
   res.status(200).json(messageObj)
