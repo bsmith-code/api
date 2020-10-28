@@ -54,7 +54,7 @@ services:
       - "traefik.http.middlewares.corsHeaders.headers.accesscontrolallowcredentials=true"
       - "traefik.http.middlewares.corsHeaders.headers.accesscontrolmaxage=100"
       - "traefik.http.middlewares.corsHeaders.headers.addvaryheader=true"
-      - "traefik.http.middlewares.corsHeaders.headers.accesscontrolalloworiginlist=http://localhost:8080, http://localhost:8081"
+      - "traefik.http.middlewares.corsHeaders.headers.accesscontrolalloworiginlist=http://chat.brianmatthewsmith.test:3000"
       - "traefik.http.routers.gateway.middlewares=corsHeaders"
     networks:
       - default

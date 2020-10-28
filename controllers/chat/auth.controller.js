@@ -84,7 +84,8 @@ exports.login = async (req, res) => {
       id: user.id,
       firstName: user.firstName,
       lastName: user.lastName,
-      username: user.username
+      username: user.username,
+      email: user.email
     })
   } catch (err) {
     res.status(500).send({ message: err.message })
@@ -96,6 +97,28 @@ exports.logout = async (req, res) => {
   try {
     clearTokens(res)
     return res.status(200)
+  } catch (err) {
+    res.status(500).send({ message: err.message })
+    throw err
+  }
+}
+
+exports.status = async (req, res) => {
+  try {
+    const {
+      cookies: { access_token: accessToken }
+    } = req
+
+    const { id } = jwt.decode(accessToken)
+    const user = await User.findByPk(id)
+
+    return res.json({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      username: user.username,
+      email: user.email
+    })
   } catch (err) {
     res.status(500).send({ message: err.message })
     throw err

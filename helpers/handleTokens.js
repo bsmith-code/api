@@ -30,7 +30,7 @@ const cookieOptions = {
   domain: getDomain(),
   maxAge: 365 * 24 * 60 * 60 * 1000,
   httpOnly: false,
-  secure: true,
+  secure: false,
   sameSite: 'Strict'
 }
 
