@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "serve": "npm run start & nodemon -r dotenv/config ./routes/index.js dotenv_config_path=./.env"
+    "serve": "npm run start & nodemon -r dotenv/config routes dotenv_config_path=./.env"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

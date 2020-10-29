@@ -30,16 +30,17 @@ services:
       MYSQL_ROOT_PASSWORD: root
 
   gateway:
+    image: node:12-alpine
+    working_dir: /api-gateway/
+    command: [sh, -c, "cd /api-gateway && npm run serve"]
     links:
       - mysql:mysql
     depends_on:
       - traefik
       - mysql
-    build: .
     container_name: api-gateway
     volumes:
       - .:/api-gateway
-      - /api-gateway/node_modules
     restart:
       always
     labels:
