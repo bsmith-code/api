@@ -14,6 +14,14 @@ module.exports = (seq, { DataTypes, UUIDV4 }) =>
       roomId: {
         type: DataTypes.UUID,
         allowNull: false
+      },
+      invitedAt: {
+        type: DataTypes.DATE,
+        allowNull: false
+      },
+      acceptedAt: {
+        type: DataTypes.DATE,
+        allowNull: true
       }
     },
     {}

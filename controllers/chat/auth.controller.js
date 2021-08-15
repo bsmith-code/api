@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 const randToken = require('rand-token')
 const dayjs = require('dayjs')
 
-const { setTokens, clearTokens } = require('../../helpers/handleTokens')
+const { setAccessToken, clearTokens } = require('../../helpers/handleTokens')
 const {
   Sequelize: { Op },
   chat: {
@@ -47,6 +47,7 @@ exports.login = async (req, res) => {
     const {
       body: { username, password }
     } = req
+
     const user = await User.findOne({
       where: {
         username
@@ -73,7 +74,8 @@ exports.login = async (req, res) => {
     )
     const refreshToken = randToken.uid(256)
 
-    setTokens(accessToken, refreshToken, res)
+    setAccessToken(accessToken, res)
+
     await Token.create({
       userId: user.id,
       refreshToken,
@@ -106,8 +108,9 @@ exports.logout = async (req, res) => {
 exports.status = async (req, res) => {
   try {
     const {
-      cookies: { access_token: accessToken }
+      headers: { authorization }
     } = req
+    const accessToken = authorization.split(' ')[1]
 
     const { id } = jwt.decode(accessToken)
     const user = await User.findByPk(id)

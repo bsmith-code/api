@@ -28,20 +28,18 @@ const getDomain = () => {
 
 const cookieOptions = {
   domain: getDomain(),
-  maxAge: 365 * 24 * 60 * 60 * 1000,
+  maxAge: 30 * 60 * 1000,
   httpOnly: false,
   secure: false,
   sameSite: 'Strict'
 }
 
-const setTokens = (accessToken, refreshToken, res) => {
-  res.cookie('access_token', accessToken, cookieOptions)
-  res.cookie('refresh_token', refreshToken, cookieOptions)
+const setAccessToken = (accessToken, res) => {
+  res.cookie('bms_access_token', accessToken, cookieOptions)
 }
 
 const clearTokens = res => {
-  res.cookie('access_token', '', { ...cookieOptions, maxAge: -1 })
-  res.cookie('refresh_token', '', { ...cookieOptions, maxAge: -1 })
+  res.cookie('bms_access_token', '', { ...cookieOptions, maxAge: -1 })
 }
 
 const refreshToken = async (req, res) => {
@@ -54,15 +52,15 @@ const refreshToken = async (req, res) => {
     const isExpired = checkToken(access)
 
     if (isExpired) {
-      const { Bearer, Refresh } = await postRefreshToken({ access, refresh })
-      setTokens(Bearer, Refresh, res)
-      request = {
-        ...req,
-        headers: {
-          ...req.headers,
-          Authorization: `Bearer ${Bearer}`
-        }
-      }
+      // const { Bearer, Refresh } = await postRefreshToken({ access, refresh })
+      // setAccessToken(Bearer, Refresh, res)
+      // request = {
+      //   ...req,
+      //   headers: {
+      //     ...req.headers,
+      //     Authorization: `Bearer ${Bearer}`
+      //   }
+      // }
     } else {
       request = {
         ...req,
@@ -82,7 +80,7 @@ const refreshToken = async (req, res) => {
 }
 
 module.exports = {
-  setTokens,
+  setAccessToken,
   clearTokens,
   refreshToken
 }

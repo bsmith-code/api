@@ -1,16 +1,16 @@
-const app = require('express')()
-const bodyParser = require('body-parser')
-const cookieParser = require('cookie-parser')
 const fs = require('fs')
-const morgan = require('morgan')
 const path = require('path')
+const morgan = require('morgan')
+const express = require('express')
+const cookieParser = require('cookie-parser')
 const chatRoutes = require('./chat')
 
+const app = express()
 const PORT = process.env.ROUTING_PORT || 8080
 
 app.use(cookieParser())
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(express.json())
+app.use(express.urlencoded())
 
 // create a write stream (in append mode)
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })

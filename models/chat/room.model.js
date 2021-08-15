@@ -10,11 +10,6 @@ module.exports = (seq, { DataTypes, UUIDV4 }) =>
       name: {
         type: DataTypes.STRING,
         allowNull: false
-      },
-      type: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: 0
       }
     },
     {}
