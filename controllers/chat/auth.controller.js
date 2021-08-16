@@ -16,23 +16,25 @@ exports.register = async (req, res) => {
     const {
       body: { firstName, lastName, username, email, password }
     } = req
-    const matchedUsers = await User.findAll({ where: { [Op.or]: { username, email } } })
+    const matchedUsers = await User.findAll({
+      where: { [Op.or]: { username, email } }
+    })
 
     if (!matchedUsers.length) {
       const passwordHash = bcrypt.hashSync(password, 10)
       const user = await User.create({
-        firstName,
+        email,
         lastName,
         username,
-        email,
+        firstName,
         password: passwordHash
       })
 
       return res.json({
-        user: user.id,
-        firstName: user.firstName,
+        id: user.id,
+        username: user.username,
         lastName: user.lastName,
-        username: user.username
+        firstName: user.firstName
       })
     }
     return res.status(401).send({ message: 'Username or email unavailable.' })

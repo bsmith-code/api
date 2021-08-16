@@ -24,5 +24,7 @@ module.exports = (seq, { DataTypes, UUIDV4 }) =>
         allowNull: true
       }
     },
-    {}
+    {
+      timestamps: false
+    }
   )

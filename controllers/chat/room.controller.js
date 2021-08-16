@@ -28,19 +28,40 @@ exports.findAll = async (req, res) => {
 exports.createRoom = async (req, res) => {
   try {
     const {
-      body: { users }
+      body: { name, users }
     } = req
 
-    const userIds = await User.findAll({
+    // Find Users
+    const foundUserIds = await User.findAll({
       attributes: ['id'],
       where: {
-        username: users
+        [Op.or]: {
+          email: users,
+          username: users
+        }
       }
     })
 
-    console.log(userIds)
+    if (foundUserIds) {
+      // Create Room
+      const room = await Room.create({
+        name
+      })
 
-    res.json(userIds)
+      // Create Members
+      const members = await Member.bulkCreate(
+        foundUserIds.map(user => ({
+          userId: user.id,
+          roomId: room.id,
+          invitedAt: new Date()
+        }))
+      )
+
+      res.json({
+        room,
+        members
+      })
+    }
   } catch (error) {
     res.status(500).send({ message: error.message })
     throw error
