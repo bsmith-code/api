@@ -130,4 +130,4 @@ exports.status = async (req, res) => {
   }
 }
 
-exports.refreshToken = async (req, res) => {}
+// exports.refreshToken = async (req, res) => {}

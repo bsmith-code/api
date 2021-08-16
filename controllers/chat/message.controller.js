@@ -23,11 +23,15 @@ exports.create = async (req, res) => {
   let room
   if (!roomId) {
     room = await Room.create({
-      name: [...users.map(user => `${user.firstName} ${user.lastName}`)].join(', '),
+      name: [...users.map(user => `${user.firstName} ${user.lastName}`)].join(
+        ', '
+      ),
       type: users.length > 1 ? 1 : 0
     })
 
-    await Member.bulkCreate([...users.map(user => ({ userId: user.id, roomId: room.id }))])
+    await Member.bulkCreate([
+      ...users.map(user => ({ userId: user.id, roomId: room.id }))
+    ])
   }
 
   const messageObj = await Message.create({

@@ -6,20 +6,22 @@ const {
   }
 } = require('../../models')
 
-exports.findAll = async (req, res) => {
+exports.getUserRooms = async (req, res) => {
   const {
     headers: { authorization }
   } = req
   const accessToken = authorization.split(' ')[1]
 
+  // Get User Id from Token
   const { id: userId } = jwt.decode(accessToken)
 
+  // Find Rooms with User ID
   const roomIds = await Member.findAll({
     attributes: ['roomId'],
     where: { userId }
   })
   const rooms = await Room.findAll({
-    where: { id: { [Op.or]: [...roomIds.map(room => room.roomId)] } }
+    where: { id: [...roomIds.map(room => room.roomId)] }
   })
 
   res.json(rooms)
@@ -66,4 +68,28 @@ exports.createRoom = async (req, res) => {
     res.status(500).send({ message: error.message })
     throw error
   }
+}
+
+exports.getMemberStatus = async (req, res) => {
+  const {
+    params: { roomId },
+    headers: { authorization }
+  } = req
+  const accessToken = authorization.split(' ')[1]
+
+  // Get User Id from Token
+  const { id: userId } = jwt.decode(accessToken)
+
+  const member = await Member.findOne({
+    where: {
+      [Op.and]: {
+        roomId,
+        userId
+      }
+    }
+  })
+
+  res.json({
+    member
+  })
 }
