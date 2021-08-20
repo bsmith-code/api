@@ -2,43 +2,36 @@ const jwt = require('jsonwebtoken')
 const {
   Sequelize: { Op },
   chat: {
-    models: { Message, Member, Room, User }
+    models: { Message, Member }
   }
 } = require('../../models')
 
-exports.create = async (req, res) => {
+exports.createMessage = async (req, res) => {
   const {
-    cookies: { access_token },
-    body: { message, roomId, userIds }
+    headers: { authorization },
+    body: { message, roomId }
   } = req
+  const accessToken = authorization.split(' ')[1]
 
-  const { id: userId } = jwt.decode(access_token)
+  // Get User ID
+  const { id: userId } = jwt.decode(accessToken)
 
-  if (!userIds.length) {
-    return res.status(401).send({ message: 'Invalid recipient(s).' })
-  }
-
-  const users = await User.findAll({ where: { id: { [Op.or]: [...userIds] } } })
-
-  let room
-  if (!roomId) {
-    room = await Room.create({
-      name: [...users.map(user => `${user.firstName} ${user.lastName}`)].join(
-        ', '
-      ),
-      type: users.length > 1 ? 1 : 0
-    })
-
-    await Member.bulkCreate([
-      ...users.map(user => ({ userId: user.id, roomId: room.id }))
-    ])
-  }
-
-  const messageObj = await Message.create({
-    message,
-    roomId: roomId || room.id,
-    userId
+  // Get Member ID
+  const memberId = Member.findOne({
+    where: {
+      [Op.and]: {
+        userId,
+        roomId
+      }
+    }
   })
 
-  res.status(200).json(messageObj)
+  // Compose Message for Response
+  const messageObj = await Message.create({
+    roomId,
+    message,
+    memberId
+  })
+
+  res.json(messageObj)
 }

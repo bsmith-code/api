@@ -2,9 +2,19 @@ const jwt = require('jsonwebtoken')
 const {
   Sequelize: { Op },
   chat: {
-    models: { Member, Room, User }
+    models: { Member, Message, Room, User }
   }
 } = require('../../models')
+
+exports.getRoomById = async (req, res) => {
+  const {
+    params: { roomId }
+  } = req
+
+  const room = await Room.findByPk(roomId)
+
+  res.json(room)
+}
 
 exports.getUserRooms = async (req, res) => {
   const {
@@ -30,8 +40,14 @@ exports.getUserRooms = async (req, res) => {
 exports.createRoom = async (req, res) => {
   try {
     const {
-      body: { name, users }
+      body: { name, users },
+      headers: { authorization }
     } = req
+    const date = new Date()
+    const accessToken = authorization.split(' ')[1]
+
+    // Get User Id from Token
+    const { id: userId } = jwt.decode(accessToken)
 
     // Find Users
     const foundUserIds = await User.findAll({
@@ -44,33 +60,32 @@ exports.createRoom = async (req, res) => {
       }
     })
 
-    if (foundUserIds) {
-      // Create Room
-      const room = await Room.create({
-        name
-      })
+    // Combine foundUserIds with userId
+    const userIds = [{ id: userId, acceptedAt: date }, ...foundUserIds]
 
-      // Create Members
-      const members = await Member.bulkCreate(
-        foundUserIds.map(user => ({
-          userId: user.id,
-          roomId: room.id,
-          invitedAt: new Date()
-        }))
-      )
+    // Create Room
+    const room = await Room.create({
+      name
+    })
 
-      res.json({
-        room,
-        members
-      })
-    }
+    // Create Members
+    await Member.bulkCreate(
+      userIds.map(user => ({
+        userId: user.id,
+        roomId: room.id,
+        invitedAt: date,
+        acceptedAt: user.acceptedAt || null
+      }))
+    )
+
+    res.json(room)
   } catch (error) {
     res.status(500).send({ message: error.message })
     throw error
   }
 }
 
-exports.getMemberStatus = async (req, res) => {
+exports.getRoomMemberStatus = async (req, res) => {
   const {
     params: { roomId },
     headers: { authorization }
@@ -80,6 +95,7 @@ exports.getMemberStatus = async (req, res) => {
   // Get User Id from Token
   const { id: userId } = jwt.decode(accessToken)
 
+  // Find Member
   const member = await Member.findOne({
     where: {
       [Op.and]: {
@@ -89,7 +105,62 @@ exports.getMemberStatus = async (req, res) => {
     }
   })
 
-  res.json({
-    member
+  res.json(member)
+}
+
+exports.getRoomMembers = async (req, res) => {
+  const {
+    params: { roomId }
+  } = req
+
+  // Find Members
+  const members = await Member.findAll({
+    where: {
+      roomId
+    }
   })
+
+  res.json(members)
+}
+
+exports.getRoomMessages = async (req, res) => {
+  const {
+    params: { roomId }
+  } = req
+
+  // Find Messages
+  const messages = await Message.findAll({
+    where: {
+      roomId
+    }
+  })
+
+  res.json(messages)
+}
+
+exports.joinRoom = async (req, res) => {
+  const {
+    params: { roomId },
+    headers: { authorization }
+  } = req
+  const accessToken = authorization.split(' ')[1]
+
+  // Get User Id from Token
+  const { id: userId } = jwt.decode(accessToken)
+
+  // Find Member
+  const member = await Member.findOne({
+    where: {
+      [Op.and]: {
+        roomId,
+        userId
+      }
+    }
+  })
+
+  // Update Member
+  member.acceptedAt = new Date()
+  await member.save()
+
+  res.json(member)
 }
