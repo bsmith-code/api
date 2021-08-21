@@ -30,14 +30,17 @@ const accessLogStream = fs.createWriteStream(
 app.use(morgan('combined', { stream: accessLogStream }))
 
 io.on('connection', socket => {
+  const emitMessage = messageObj => {
+    io.sockets.emit('create-message', messageObj)
+  }
+
   socket.on('create-message', async ({ roomId, message, userId }) => {
     const messageObj = await Message.create({
       roomId,
       message,
       userId
     })
-
-    socket.emit('create-message', messageObj)
+    emitMessage(messageObj)
   })
 })
 
