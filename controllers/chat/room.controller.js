@@ -109,33 +109,86 @@ exports.getRoomMemberStatus = async (req, res) => {
 }
 
 exports.getRoomMembers = async (req, res) => {
-  const {
-    params: { roomId }
-  } = req
+  try {
+    const {
+      params: { roomId }
+    } = req
 
-  // Find Members
-  const members = await Member.findAll({
-    where: {
-      roomId
-    }
-  })
+    // Find Members by Room ID
+    const members = await Member.findAll({
+      where: {
+        roomId
+      }
+    })
+    const preparedMembers = members.map(member => member.dataValues)
 
-  res.json(members)
+    // Find Users by User ID from Members list
+    const users = await User.findAll({
+      where: {
+        id: [...preparedMembers.map(member => member.userId)]
+      }
+    })
+
+    // Aggregate Data For Response
+    const preparedResponse = []
+    preparedMembers.map(member => {
+      const user = users.find(userObj => userObj.id === member.userId) || {}
+      preparedResponse.push({
+        ...member,
+        profile: {
+          firstName: user.dataValues.firstName,
+          lastName: user.dataValues.lastName,
+          email: user.dataValues.email
+        }
+      })
+    })
+
+    res.json(preparedResponse)
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 exports.getRoomMessages = async (req, res) => {
-  const {
-    params: { roomId }
-  } = req
+  try {
+    const {
+      params: { roomId }
+    } = req
 
-  // Find Messages
-  const messages = await Message.findAll({
-    where: {
-      roomId
-    }
-  })
+    // Find Messages by Room ID
+    const messages = await Message.findAll({
+      where: {
+        roomId
+      }
+    })
+    const preparedMessages = messages.map(message => message.dataValues)
 
-  res.json(messages)
+    // Find Users by User ID from Messages list
+    const users = await User.findAll({
+      where: {
+        id: [...preparedMessages.map(message => message.userId)]
+      }
+    })
+
+    // Aggregate Data For Response
+    const preparedResponse = []
+    preparedMessages.map(messageObj => {
+      const user = users.find(userObj => userObj.id === messageObj.userId) || {}
+      preparedResponse.push({
+        id: messageObj.id,
+        message: messageObj.message,
+        createdAt: messageObj.createdAt,
+        author: {
+          firstName: user.dataValues.firstName,
+          lastName: user.dataValues.lastName
+        }
+      })
+    })
+
+    res.json(preparedResponse)
+  } catch (error) {
+    console.log('ERROR', error)
+  }
 }
 
 exports.joinRoom = async (req, res) => {

@@ -12,7 +12,7 @@ const io = require('socket.io')(httpServer, {})
 const chatRoutes = require('./chat')
 const {
   chat: {
-    models: { Message }
+    models: { Message, User }
   }
 } = require('../models')
 
@@ -35,12 +35,28 @@ io.on('connection', socket => {
   }
 
   socket.on('create-message', async ({ roomId, message, userId }) => {
-    const messageObj = await Message.create({
-      roomId,
-      message,
-      userId
-    })
-    emitMessage(messageObj)
+    try {
+      const messageObj = await Message.create({
+        roomId,
+        message,
+        userId
+      })
+      const messageAuthor = await User.findByPk(userId)
+
+      const preparedResponse = {
+        id: messageObj.dataValues.id,
+        message: messageObj.dataValues.message,
+        createdAt: messageObj.dataValues.createdAt,
+        author: {
+          firstName: messageAuthor.dataValues.firstName,
+          lastName: messageAuthor.dataValues.lastName
+        }
+      }
+
+      emitMessage(preparedResponse)
+    } catch (error) {
+      console.log('ERROR', error)
+    }
   })
 })
 
