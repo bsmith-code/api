@@ -45,6 +45,7 @@ io.on('connection', socket => {
 
       const preparedResponse = {
         id: messageObj.dataValues.id,
+        roomId: messageObj.dataValues.roomId,
         message: messageObj.dataValues.message,
         createdAt: messageObj.dataValues.createdAt,
         author: {
