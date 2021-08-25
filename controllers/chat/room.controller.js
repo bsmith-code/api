@@ -120,28 +120,42 @@ exports.getRoomMembers = async (req, res) => {
         roomId
       }
     })
+
+    // Prepare Members for Response
     const preparedMembers = members.map(member => member.dataValues)
+    const acceptedMembers = preparedMembers.filter(
+      member => member.acceptedAt !== null
+    )
+    const pendingMembers = preparedMembers.filter(
+      member => member.acceptedAt === null
+    )
 
     // Find Users by User ID from Members list
     const users = await User.findAll({
       where: {
-        id: [...preparedMembers.map(member => member.userId)]
+        id: preparedMembers.map(member => member.userId)
       }
     })
 
     // Aggregate Data For Response
-    const preparedResponse = []
-    preparedMembers.map(member => {
-      const user = users.find(userObj => userObj.id === member.userId) || {}
-      preparedResponse.push({
-        ...member,
-        profile: {
-          firstName: user.dataValues.firstName,
-          lastName: user.dataValues.lastName,
-          email: user.dataValues.email
+    const getUser = userId => users.find(user => user.id === userId)
+    const prepareMembers = membersArr =>
+      membersArr.map(member => {
+        const { firstName, lastName, email } = getUser(member.userId)
+        return {
+          ...member,
+          profile: {
+            firstName,
+            lastName,
+            email
+          }
         }
       })
-    })
+
+    const preparedResponse = {
+      accepted: [...prepareMembers(acceptedMembers)],
+      pending: [...prepareMembers(pendingMembers)]
+    }
 
     res.json(preparedResponse)
   } catch (error) {
