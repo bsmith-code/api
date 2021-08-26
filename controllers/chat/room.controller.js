@@ -61,7 +61,10 @@ exports.createRoom = async (req, res) => {
     })
 
     // Combine foundUserIds with userId
-    const userIds = [{ id: userId, acceptedAt: date }, ...foundUserIds]
+    const userIds = [
+      { id: userId, acceptedAt: date },
+      ...foundUserIds.filter(user => user.id !== userId)
+    ]
 
     // Create Room
     const room = await Room.create({
