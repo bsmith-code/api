@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize')
 const { readdirSync, lstatSync } = require('fs')
 const { join } = require('path')
-const config = require('../config/db.config.js')
+const config = require('../config/db.config')
 
 const models = readdirSync('./models').filter(folder =>
   lstatSync(join('./models', folder)).isDirectory()

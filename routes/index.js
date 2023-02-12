@@ -9,7 +9,10 @@ const httpServer = require('http').createServer(app)
 
 const PORT = process.env.ROUTING_PORT || 8080
 const io = require('socket.io')(httpServer, {})
+
 const chatRoutes = require('./chat')
+const portfolioRoutes = require('./portfolio')
+
 const {
   chat: {
     models: { Message, User }
@@ -63,6 +66,8 @@ io.on('connection', socket => {
 
 // add service routes here
 app.use('/chat', chatRoutes)
+app.use('/portfolio', portfolioRoutes)
+
 app.get('/', async (_, res) => {
   res.status(200).json({ message: 'Welcome to the API Gateway.' })
 })
