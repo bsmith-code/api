@@ -1,4 +1,4 @@
-exports.sendEmail = async (req, res) => {
+exports.postEmail = async (req, res) => {
   const { body } = req
 
   console.log(body)
