@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+import { Request, Response } from 'express'
 
 export const postEmail = async (req: Request, res: Response) => {
   const { body } = req
