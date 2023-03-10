@@ -1,9 +1,39 @@
-import { Request, Response } from 'express'
+// Common
+import nodemailer from 'nodemailer'
 
-export const postEmail = async (req: Request, res: Response) => {
-  const { body } = req
+// Types
+import { IRequest, IResponse, IPortfolioEmail } from 'types'
 
-  console.log(body)
+const transporter = nodemailer.createTransport({
+  port: 465,
+  host: 'smtp.gmail.com',
+  auth: {
+    user: 'brian@brianmatthewsmith.com',
+    pass: ''
+  },
+  secure: true
+})
 
-  res.json('')
+export const postEmail = async (
+  req: IRequest<undefined, IPortfolioEmail>,
+  res: IResponse<{ message: string }>
+) => {
+  try {
+    const { firstName, lastName, email, subject, message } = req.body
+
+    const mailData = {
+      from: `${firstName} ${lastName} <${email}>`,
+      to: 'brian@brianmatthewsmith.com',
+      subject,
+      text: message
+    }
+
+    await transporter.sendMail(mailData)
+
+    res.status(200).send({ message: 'Message sent.' })
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new TypeError(error.message)
+    }
+  }
 }
