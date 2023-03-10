@@ -1,5 +1,7 @@
 // Common
 import express from 'express'
+import helmet from 'helmet'
+import compression from 'compression'
 import cors, { CorsOptions } from 'cors'
 import bodyParser from 'body-parser'
 
@@ -8,11 +10,17 @@ import routes from 'routes/v1'
 
 const app = express()
 
+// Set security HTTP headers
+app.use(helmet())
+
 // Parse JSON request body
 app.use(bodyParser.json())
 
 // Parse urlencoded request body
 app.use(bodyParser.urlencoded({ extended: true }))
+
+// Enable gzip compression
+app.use(compression())
 
 // Enable CORS
 const corsOptions: CorsOptions = {

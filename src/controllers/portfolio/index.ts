@@ -4,12 +4,18 @@ import nodemailer from 'nodemailer'
 // Types
 import { IRequest, IResponse, IPortfolioEmail } from 'types'
 
+const {
+  ENV_SMTP_USER = '',
+  ENV_SMTP_PASS = '',
+  ENV_SMTP_HOST = ''
+} = process.env
+
 const transporter = nodemailer.createTransport({
   port: 465,
-  host: 'smtp.gmail.com',
+  host: ENV_SMTP_HOST,
   auth: {
-    user: 'brian@brianmatthewsmith.com',
-    pass: ''
+    user: ENV_SMTP_USER,
+    pass: ENV_SMTP_PASS
   },
   secure: true
 })
@@ -23,7 +29,7 @@ export const postEmail = async (
 
     const mailData = {
       from: `${firstName} ${lastName} <${email}>`,
-      to: 'brian@brianmatthewsmith.com',
+      to: ENV_SMTP_USER,
       subject,
       text: message
     }
