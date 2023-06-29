@@ -41,7 +41,7 @@ app.get('/', (_, res) => {
   res.status(200).json({ message: 'Welcome to the API Gateway.' })
 })
 
-const PORT = 3000
+const PORT = 3001
 try {
   app.listen(PORT, (): void => {
     console.log(`Connected successfully on port ${PORT}`)

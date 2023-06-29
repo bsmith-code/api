@@ -1,5 +1,6 @@
 // Common
 import nodemailer from 'nodemailer'
+import { validationResult } from 'express-validator'
 
 // Types
 import { IRequest, IResponse, IPortfolioEmail } from 'types'
@@ -25,6 +26,12 @@ export const postEmail = async (
   res: IResponse<{ message: string }>
 ) => {
   try {
+    const result = validationResult(req)
+
+    if (!result.isEmpty()) {
+      throw result.array()
+    }
+
     const { firstName, lastName, email, subject, message } = req.body
 
     const mailData = {
@@ -34,12 +41,10 @@ export const postEmail = async (
       text: message
     }
 
-    await transporter.sendMail(mailData)
+    const data = await transporter.sendMail(mailData)
 
-    res.status(200).send({ message: 'Message sent.' })
+    res.send(data)
   } catch (error) {
-    if (error instanceof Error) {
-      throw new TypeError(error.message)
-    }
+    res.status(400).send(error)
   }
 }
