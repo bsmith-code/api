@@ -8,7 +8,7 @@ const models = readdirSync('./models').filter(folder =>
 )
 const db = {}
 
-Object.keys(config.databases).map(name => {
+Object.keys(config.databases).forEach(name => {
   const {
     database,
     username,
