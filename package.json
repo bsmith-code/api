@@ -1,9 +1,7 @@
 {
-  "name": "api.brianmatthewsmith.com",
-  "description": "API Gateway",
-  "repository": {},
-  "license": "Brian Matthew Smith",
-  "version": "1.0.0",
+  "name": "api-gateway",
+  "private": true,
+  "version": "2.0.0",
   "main": "index.ts",
   "scripts": {
     "start": "dotenv -e .env -- ts-node-dev -r tsconfig-paths/register --respawn src",
