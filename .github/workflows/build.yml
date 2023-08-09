@@ -17,8 +17,7 @@ jobs:
         node-version: 18.x
         cache: 'npm'
     - run: npm install yarn
-    - run: yarn install
-    - run: yarn build
+    - run: yarn && yarn build
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
