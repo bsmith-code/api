@@ -5,7 +5,6 @@ import fetch from 'node-fetch'
 
 // Types
 import { IRequest, IResponse, IPortfolioEmail } from 'types'
-import { NextFunction } from 'express'
 
 const {
   ENV_SMTP_USER = '',

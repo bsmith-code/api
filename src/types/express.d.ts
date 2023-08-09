@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { Request, Response, Send } from 'express'
 
 export interface IRequest<T, U> extends Request {
   body: U

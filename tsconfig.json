@@ -1,9 +1,16 @@
 {
-  "extends": "@tsconfig/node16/tsconfig.json",
+  "extends": "@tsconfig/recommended/tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "./src",
-    "outDir": "build"
+    "baseUrl": "src",
+    "outDir": "build",
+    "paths": {
+      "routes/*": ["./routes/*"],
+      "controllers/*": ["./controllers/*"],
+      "middleware/*": ["./middleware/*"],
+      "constants/*": ["./constants/*"],
+      "helpers/*": ["./helpers/*"]
+    }
   },
-  "include": ["src"],
+  "include": ["./src/**/*.ts"],
   "exclude": ["node_modules"]
 }
