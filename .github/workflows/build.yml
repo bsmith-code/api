@@ -16,7 +16,7 @@ jobs:
       with:
         node-version: 18.x
         cache: 'npm'
-    - run: npm install -g yarn tspath
+    - run: npm install -g yarn tspath typescript
     - run: yarn build
     - name: Upload artifact
       uses: actions/upload-artifact@v3
