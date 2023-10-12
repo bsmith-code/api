@@ -25,7 +25,7 @@ app.use(compression())
 // Enable CORS
 const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
-    if (origin?.includes('brianmatthewsmith')) {
+    if (!origin || origin?.includes('brianmatthewsmith')) {
       return callback(null, true)
     }
     return callback(new Error('Not allowed by CORS'))
