@@ -4,6 +4,7 @@ import helmet from 'helmet'
 import compression from 'compression'
 import cors, { CorsOptions } from 'cors'
 import bodyParser from 'body-parser'
+import { connect } from 'database'
 
 // Routes
 import routes from 'routes/v1'
@@ -43,8 +44,8 @@ app.get('/', (_, res) => {
 
 const PORT = process?.env?.PORT ?? '3001'
 try {
-  app.listen(PORT, (): void => {
-    console.log(`Connected successfully on port ${PORT}`)
+  app.listen(PORT, async (): Promise<void> => {
+    await connect()
   })
 } catch (error) {
   if (error instanceof Error) {

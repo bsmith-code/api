@@ -2,7 +2,9 @@
 import express from 'express'
 
 // Controllers
-import { postRegister } from 'controllers/auth'
+import { createUser } from 'controllers/auth'
 
 const authRouter = express.Router()
-authRouter.post('/register', postRegister)
+authRouter.post('/register', createUser)
+
+export default authRouter

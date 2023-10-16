@@ -64,6 +64,7 @@ module.exports = {
         '@typescript-eslint/unbound-method': 'off',
         'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
         'unicorn/no-array-reduce': 'off',
+        'unicorn/expiring-todo-comments': 'off',
         '@typescript-eslint/no-misused-promises': [
           'error',
           { checksVoidReturn: false },
