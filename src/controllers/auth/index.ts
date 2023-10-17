@@ -1,15 +1,23 @@
 import { IRequest, IResponse } from 'types'
-import { Request, Response, Send } from 'express'
 import { IUser } from 'types/auth'
 import { Transaction } from 'sequelize'
 import { getTransaction } from 'database'
 import { User } from 'models/auth/user'
 
-export const createUser = async (req: Request<IUser>, res: Response<IUser>) => {
+export const createUser = async (
+  req: IRequest<IUser>,
+  res: IResponse<IUser>
+) => {
   let transaction: Transaction | undefined
-
-  console.log(req)
   try {
+    const {
+      body: { firstName, lastName, email, password }
+    } = req
+
+    const matchedUsers = await User.findAll({
+      where: { email }
+    })
+
     transaction = await getTransaction()
 
     const result = await User.create(req.body)

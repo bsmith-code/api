@@ -12,7 +12,10 @@ const sequelize = new Sequelize(dbConfig)
 export const connect = async () => {
   try {
     await sequelize.authenticate()
+
     sequelize.addModels([User])
+    await sequelize.sync({ force: false, alter: true })
+
     console.log('Database connection established.')
   } catch (error) {
     console.error(

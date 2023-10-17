@@ -2,17 +2,24 @@ import {
   Model,
   Table,
   Column,
+  Default,
   DataType,
   AllowNull,
   CreatedAt,
   UpdatedAt,
-  PrimaryKey
+  PrimaryKey,
+  AutoIncrement
 } from 'sequelize-typescript'
 
 @Table({ tableName: 'user' })
 export class User extends Model {
+  @AutoIncrement
+  @Column(DataType.INTEGER)
+  id!: number
+
   @PrimaryKey
-  @Column(DataType.UUIDV4)
+  @Default(DataType.UUIDV4)
+  @Column(DataType.UUID)
   uuid!: string
 
   @AllowNull(false)
