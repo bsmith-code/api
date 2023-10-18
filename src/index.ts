@@ -11,31 +11,17 @@ import routes from 'routes/index'
 
 const app = express()
 
-// Set security HTTP headers
-app.use(helmet())
-
-// Parse JSON request body
-app.use(bodyParser.json())
-
-// Parse urlencoded request body
-app.use(bodyParser.urlencoded({ extended: true }))
-
-// Enable gzip compression
-app.use(compression())
-
-// Enable CORS
 const corsOptions: CorsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || origin?.includes('brianmatthewsmith')) {
-      return callback(null, true)
-    }
-    return callback(new Error('Not allowed by CORS'))
-  },
+  origin: true,
+  credentials: true,
   optionsSuccessStatus: 200
 }
-app.use(cors(corsOptions))
 
-// v1 API routes
+app.use(helmet())
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(compression())
+app.use(cors(corsOptions))
 app.use('/v1', routes)
 
 app.get('/', (_, res) => {

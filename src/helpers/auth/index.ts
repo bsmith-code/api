@@ -1,7 +1,9 @@
-import { CookieOptions, Response } from 'express'
+import dayjs from 'dayjs'
+import { CookieOptions } from 'express'
+
+const env = process.env.NODE_ENV ?? 'production'
 
 const getDomain = () => {
-  const env = process.env.NODE_ENV ?? 'production'
   const envMapper: Record<string, string> = {
     local: '.brianmatthewsmith.local',
     production: '.brianmatthewsmith.com'
@@ -10,13 +12,11 @@ const getDomain = () => {
   return envMapper[env]
 }
 
-const cookieOptions: CookieOptions = {
-  domain: getDomain(),
+export const cookieOptions: CookieOptions = {
+  path: '/',
+  secure: env === 'production',
   httpOnly: true,
-  secure: true,
-  sameSite: 'strict'
-}
-
-export const setAccessToken = (accessToken: string) => (res: Response) => {
-  res.cookie('bms_access_token', accessToken, cookieOptions)
+  sameSite: 'strict',
+  domain: getDomain(),
+  expires: dayjs().add(30, 'days').toDate()
 }

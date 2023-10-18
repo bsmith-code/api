@@ -3,15 +3,18 @@ import { compareSync, hashSync } from 'bcryptjs'
 import { Transaction } from 'sequelize'
 import { Response } from 'express'
 import { sign } from 'jsonwebtoken'
+
 // DB
 import { getTransaction } from 'database'
 
 // Models
 import { User } from 'models/auth/user'
 
+// Utils
+import { cookieOptions } from 'helpers/auth'
+
 // Types
 import { IUser, IRequest } from 'types'
-import { setAccessToken } from 'helpers/auth'
 
 type TUserResponse = Response<Partial<IUser> | { message: string }>
 
@@ -89,9 +92,9 @@ export const login = async (
       }
     )
 
-    setAccessToken(accessToken)(res)
+    console.log(cookieOptions)
 
-    return res.json({
+    return res.cookie('accessToken', accessToken, cookieOptions).json({
       id: user.id,
       email: user.email,
       lastName: user.lastName,

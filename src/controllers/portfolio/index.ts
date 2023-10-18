@@ -1,10 +1,12 @@
 // Common
+import fetch from 'node-fetch'
+import { Response } from 'express'
 import nodemailer from 'nodemailer'
 import { validationResult } from 'express-validator'
-import fetch from 'node-fetch'
+import SMTPTransport from 'nodemailer/lib/smtp-transport'
 
 // Types
-import { IRequest, IResponse, IPortfolioEmail } from 'types'
+import { IRequest, IPortfolioEmail } from 'types'
 
 const {
   ENV_SMTP_USER = '',
@@ -39,8 +41,8 @@ const verifyReCaptcha = async (token: string) => {
 }
 
 export const postEmail = async (
-  req: IRequest<undefined, IPortfolioEmail>,
-  res: IResponse<{ message: string }>
+  req: IRequest<IPortfolioEmail>,
+  res: Response<SMTPTransport.SentMessageInfo | { message: string }>
 ) => {
   try {
     const result = validationResult(req)
