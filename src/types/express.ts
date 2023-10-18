@@ -1,9 +1,5 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
 
 export interface IRequest<T> extends Request {
   body: T
-}
-
-export interface IResponse<T> extends Response {
-  json: T
 }

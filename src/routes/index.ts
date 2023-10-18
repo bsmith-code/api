@@ -1,6 +1,6 @@
 import express from 'express'
-import authRouter from 'routes/v1/auth'
-import portfolioRouter from 'routes/v1/portfolio'
+import authRouter from 'routes/auth'
+import portfolioRouter from 'routes/portfolio'
 
 const router = express.Router()
 

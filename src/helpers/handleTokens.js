@@ -15,22 +15,19 @@ const checkToken = accessToken => {
 }
 
 const getDomain = () => {
-  const env = process.env.ENVIRONMENT
+  const env = process.env.NODE_ENV
   const envMapper = {
-    local: '.brianmatthewsmith.test',
-    development: '.development.brianmatthewsmith.com',
-    staging: '.staging.brianmatthewsmith.com',
+    local: '.brianmatthewsmith.local',
     production: '.brianmatthewsmith.com'
   }
 
-  return envMapper[env] || '.ine.com'
+  return envMapper[env]
 }
 
 const cookieOptions = {
   domain: getDomain(),
-  // maxAge: 30 * 60 * 1000,
-  httpOnly: false,
-  secure: false,
+  httpOnly: true,
+  secure: true,
   sameSite: 'Strict'
 }
 

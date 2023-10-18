@@ -7,7 +7,7 @@ import bodyParser from 'body-parser'
 import { connect } from 'database'
 
 // Routes
-import routes from 'routes/v1'
+import routes from 'routes/index'
 
 const app = express()
 

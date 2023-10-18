@@ -1,3 +1,4 @@
+// Common
 import {
   Model,
   Table,
@@ -7,32 +8,27 @@ import {
   AllowNull,
   CreatedAt,
   UpdatedAt,
-  PrimaryKey
+  PrimaryKey,
+  ForeignKey
 } from 'sequelize-typescript'
 
-@Table({ tableName: 'user' })
-export class User extends Model {
+// Models
+import { User } from 'models/auth/user'
+
+@Table({ tableName: 'token' })
+export class Token extends Model {
   @PrimaryKey
-  @AllowNull(false)
   @Default(DataType.UUIDV4)
   @Column(DataType.UUID)
   id!: string
 
-  @AllowNull(false)
-  @Column(DataType.STRING)
-  firstName!: string
+  @ForeignKey(() => User)
+  @Column(DataType.UUID)
+  userId!: string
 
   @AllowNull(false)
   @Column(DataType.STRING)
-  lastName!: string
-
-  @AllowNull(false)
-  @Column(DataType.STRING)
-  email!: string
-
-  @AllowNull(false)
-  @Column(DataType.STRING)
-  password!: string
+  refreshToken!: string
 
   @CreatedAt
   createdAt?: Date
