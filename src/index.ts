@@ -4,6 +4,7 @@ import helmet from 'helmet'
 import compression from 'compression'
 import cors, { CorsOptions } from 'cors'
 import bodyParser from 'body-parser'
+import cookieParser from 'cookie-parser'
 import { connect } from 'database'
 
 // Routes
@@ -18,6 +19,7 @@ const corsOptions: CorsOptions = {
 }
 
 app.use(helmet())
+app.use(cookieParser())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(compression())

@@ -2,7 +2,7 @@
 import { compareSync, hashSync } from 'bcryptjs'
 import { Transaction } from 'sequelize'
 import { Response } from 'express'
-import { sign } from 'jsonwebtoken'
+import { JwtPayload, decode, sign } from 'jsonwebtoken'
 
 // DB
 import { getTransaction } from 'database'
@@ -18,7 +18,7 @@ import { IUser, IRequest } from 'types'
 
 type TUserResponse = Response<Partial<IUser> | { message: string }>
 
-export const createUser = async (req: IRequest<IUser>, res: TUserResponse) => {
+export const userCreate = async (req: IRequest<IUser>, res: TUserResponse) => {
   let transaction: Transaction | undefined
   try {
     const {
@@ -58,7 +58,7 @@ export const createUser = async (req: IRequest<IUser>, res: TUserResponse) => {
   }
 }
 
-export const login = async (
+export const userLogin = async (
   req: IRequest<Pick<IUser, 'email' | 'password'>>,
   res: TUserResponse
 ) => {
@@ -92,14 +92,32 @@ export const login = async (
       }
     )
 
-    console.log(cookieOptions)
-
     return res.cookie('accessToken', accessToken, cookieOptions).json({
       id: user.id,
       email: user.email,
       lastName: user.lastName,
       firstName: user.firstName
     })
+  } catch (error) {
+    res.status(400).send({ message: (error as Error).message })
+    throw error
+  }
+}
+
+export const userStatus = async (req: IRequest<string>, res: Response) => {
+  try {
+    const {
+      cookies: { accessToken }
+    } = req
+
+    if (!accessToken) {
+      return res.status(400).send({ message: 'User not authenticated.' })
+    }
+
+    const { id } = decode(accessToken) as JwtPayload & { id: string }
+    const user = await User.findByPk(id)
+
+    return res.json(user)
   } catch (error) {
     res.status(400).send({ message: (error as Error).message })
     throw error
