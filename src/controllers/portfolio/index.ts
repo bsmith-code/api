@@ -1,29 +1,12 @@
 // Common
 import { Response } from 'express'
-import nodemailer from 'nodemailer'
 import SMTPTransport from 'nodemailer/lib/smtp-transport'
 
 // Utils
-import { validateForm, verifyReCaptcha } from 'helpers'
+import { transporter, validateForm, verifyReCaptcha } from 'helpers'
 
 // Types
 import { IRequest, IPortfolioEmail } from 'types'
-
-const {
-  ENV_SMTP_USER = '',
-  ENV_SMTP_PASS = '',
-  ENV_SMTP_HOST = ''
-} = process.env
-
-const transporter = nodemailer.createTransport({
-  port: 465,
-  host: ENV_SMTP_HOST,
-  auth: {
-    user: ENV_SMTP_USER,
-    pass: ENV_SMTP_PASS
-  },
-  secure: true
-})
 
 export const postEmail = async (
   req: IRequest<IPortfolioEmail>,
@@ -37,7 +20,7 @@ export const postEmail = async (
 
     const mailData = {
       from: `${firstName} ${lastName} <${email}>`,
-      to: ENV_SMTP_USER,
+      to: process.env.ENV_SMTP_USER,
       subject,
       text: message
     }

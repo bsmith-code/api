@@ -7,8 +7,9 @@ interface IUser {
 
 export interface IAuthUser extends IUser {
   id: string
-  createdAt: string
-  updatedAt: string
+  verified: boolean
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface IAuthUserCreate extends IUser {

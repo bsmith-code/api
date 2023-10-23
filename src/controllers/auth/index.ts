@@ -12,13 +12,27 @@ import { User } from 'models/auth/user'
 
 // Utils
 import { cookieOptions } from 'helpers/auth'
-import { validateForm, verifyReCaptcha } from 'helpers/forms'
+import { transporter, validateForm, verifyReCaptcha } from 'helpers/forms'
 
 // Types
 import { IAuthUser, IAuthUserCreate, IRequest } from 'types'
 
 type TUserResponse = Response<Partial<IAuthUser> | { message: string }>
 const tokenSecret = process.env.ENV_TOKEN_SECRET ?? ''
+
+export const verifyEmail = async ({ id, email }: IAuthUser) => {
+  const mailData = {
+    from: `noreply@brianmmatthewsmith.com`,
+    to: email,
+    subject: 'Please Verify Your Email Address',
+    html: `
+      <a href="auth.brianmatthewsmith.local:3002?verifyEmail=${id}
+
+    `
+  }
+
+  await transporter.sendMail(mailData)
+}
 
 export const createUser = async (
   req: IRequest<IAuthUserCreate>,
@@ -48,6 +62,8 @@ export const createUser = async (
         firstName,
         password: preparedPassword
       })
+
+      await verifyEmail(user)
 
       return res.json({
         id: user.id,

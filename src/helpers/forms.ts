@@ -1,11 +1,28 @@
 // Common
 import fetch from 'node-fetch'
 import { validationResult } from 'express-validator'
+import nodemailer from 'nodemailer'
 
 // Types
 import { IRequest } from 'types'
 
-const { ENV_RECAPTCHA_URL = '', ENV_RECAPTCHA_SECRET = '' } = process.env
+const {
+  ENV_SMTP_HOST = '',
+  ENV_SMTP_USER = '',
+  ENV_SMTP_PASS = '',
+  ENV_RECAPTCHA_URL = '',
+  ENV_RECAPTCHA_SECRET = ''
+} = process.env
+
+export const transporter = nodemailer.createTransport({
+  port: 465,
+  host: ENV_SMTP_HOST,
+  auth: {
+    user: ENV_SMTP_USER,
+    pass: ENV_SMTP_PASS
+  },
+  secure: true
+})
 
 export const verifyReCaptcha = async (token: string) => {
   const response = await fetch(

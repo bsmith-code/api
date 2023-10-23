@@ -34,6 +34,11 @@ export class User extends Model {
   @Column(DataType.STRING)
   password!: string
 
+  @AllowNull(false)
+  @Default(false)
+  @Column(DataType.BOOLEAN)
+  verified!: boolean
+
   @CreatedAt
   createdAt?: Date
 
