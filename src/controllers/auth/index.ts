@@ -26,7 +26,8 @@ export const verifyEmail = async ({ id, email }: IAuthUser) => {
     to: email,
     subject: 'Please Verify Your Email Address',
     html: `
-      <a href="auth.brianmatthewsmith.local:3002?verifyEmail=${id}
+
+      <a href="http://auth.brianmatthewsmith.local:3002?verifyEmail=${id}" target="_blank">Verify Email</a>
 
     `
   }
@@ -34,7 +35,7 @@ export const verifyEmail = async ({ id, email }: IAuthUser) => {
   await transporter.sendMail(mailData)
 }
 
-export const createUser = async (
+export const registerUser = async (
   req: IRequest<IAuthUserCreate>,
   res: TUserResponse
 ) => {
@@ -101,12 +102,16 @@ export const authenticateUser = async (
     })
 
     if (!user) {
-      return res.status(400).send({ message: 'Invalid email or password.' })
+      throw new Error('Invalid email or password.')
+    }
+
+    if (!user.verified) {
+      throw new Error('Email is not verified.')
     }
 
     const isValidPassword = compareSync(password, user.password)
     if (!isValidPassword) {
-      return res.status(401).send({ message: 'Invalid email or password.' })
+      throw new Error('Invalid email or password.')
     }
 
     const accessToken = sign(

@@ -10,7 +10,7 @@ import {
   FORM_FIRST_NAME
 } from 'constants/forms'
 
-export const validateCreateUser = () => {
+export const validateRegisterUser = () => {
   const requiredFields = body([
     FORM_EMAIL,
     FORM_CAPTCHA,
