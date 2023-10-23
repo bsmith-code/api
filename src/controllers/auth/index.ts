@@ -2,7 +2,7 @@
 import { compareSync, hashSync } from 'bcryptjs'
 import { Transaction } from 'sequelize'
 import { Response } from 'express'
-import { JwtPayload, decode, sign } from 'jsonwebtoken'
+import { JwtPayload, sign, verify } from 'jsonwebtoken'
 
 // DB
 import { getTransaction } from 'database'
@@ -12,26 +12,34 @@ import { User } from 'models/auth/user'
 
 // Utils
 import { cookieOptions } from 'helpers/auth'
+import { validateForm, verifyReCaptcha } from 'helpers/forms'
 
 // Types
-import { IUser, IRequest } from 'types'
+import { IAuthUser, IAuthUserCreate, IRequest } from 'types'
 
-type TUserResponse = Response<Partial<IUser> | { message: string }>
+type TUserResponse = Response<Partial<IAuthUser> | { message: string }>
+const tokenSecret = process.env.ENV_TOKEN_SECRET ?? ''
 
-export const userCreate = async (req: IRequest<IUser>, res: TUserResponse) => {
+export const createUser = async (
+  req: IRequest<IAuthUserCreate>,
+  res: TUserResponse
+) => {
   let transaction: Transaction | undefined
   try {
+    validateForm(req)
+
     const {
-      body: { firstName, lastName, email, password }
+      body: { firstName, lastName, email, password, recaptcha }
     } = req
+
+    transaction = await getTransaction()
 
     const matchedUsers = await User.findAll({
       where: { email }
     })
 
-    transaction = await getTransaction()
-
     if (!matchedUsers.length) {
+      await verifyReCaptcha(recaptcha)
       const preparedPassword = hashSync(password, 10)
 
       const user = await User.create({
@@ -54,15 +62,18 @@ export const userCreate = async (req: IRequest<IUser>, res: TUserResponse) => {
     if (transaction) {
       await transaction.rollback()
     }
-    throw error
+
+    return res.status(400).send({ message: (error as Error).message })
   }
 }
 
-export const userLogin = async (
-  req: IRequest<Pick<IUser, 'email' | 'password'>>,
+export const authenticateUser = async (
+  req: IRequest<Pick<IAuthUser, 'email' | 'password'>>,
   res: TUserResponse
 ) => {
   try {
+    validateForm(req)
+
     const {
       body: { email, password }
     } = req
@@ -86,7 +97,7 @@ export const userLogin = async (
       {
         id: user.id
       },
-      process.env.ENV_TOKEN_SECRET ?? '',
+      tokenSecret,
       {
         expiresIn: '30m'
       }
@@ -99,12 +110,11 @@ export const userLogin = async (
       firstName: user.firstName
     })
   } catch (error) {
-    res.status(400).send({ message: (error as Error).message })
-    throw error
+    return res.status(400).send({ message: (error as Error).message })
   }
 }
 
-export const userStatus = async (req: IRequest<string>, res: Response) => {
+export const verifyUser = async (req: IRequest<string>, res: Response) => {
   try {
     const {
       cookies: { accessToken }
@@ -114,12 +124,13 @@ export const userStatus = async (req: IRequest<string>, res: Response) => {
       return res.status(400).send({ message: 'User not authenticated.' })
     }
 
-    const { id } = decode(accessToken) as JwtPayload & { id: string }
+    const { id } = verify(accessToken, tokenSecret) as JwtPayload & {
+      id: string
+    }
     const user = await User.findByPk(id)
 
     return res.json(user)
   } catch (error) {
-    res.status(400).send({ message: (error as Error).message })
-    throw error
+    return res.status(400).send({ message: (error as Error).message })
   }
 }

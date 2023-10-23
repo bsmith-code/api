@@ -1,4 +1,7 @@
+// Common
 import express from 'express'
+
+// Routes
 import authRouter from 'routes/auth'
 import portfolioRouter from 'routes/portfolio'
 
