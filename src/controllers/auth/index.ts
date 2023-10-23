@@ -20,7 +20,7 @@ import { IAuthUser, IAuthUserCreate, IRequest } from 'types'
 type TUserResponse = Response<Partial<IAuthUser> | { message: string }>
 const tokenSecret = process.env.ENV_TOKEN_SECRET ?? ''
 
-export const verifyEmail = async ({ id, email }: IAuthUser) => {
+export const sendVerificationEmail = async ({ id, email }: IAuthUser) => {
   const mailData = {
     from: `noreply@brianmmatthewsmith.com`,
     to: email,
@@ -64,7 +64,7 @@ export const registerUser = async (
         password: preparedPassword
       })
 
-      await verifyEmail(user)
+      await sendVerificationEmail(user)
 
       return res.json({
         id: user.id,
@@ -135,14 +135,14 @@ export const authenticateUser = async (
   }
 }
 
-export const verifyUser = async (req: IRequest<string>, res: Response) => {
+export const verifyUser = async (req: IRequest, res: Response) => {
   try {
     const {
       cookies: { accessToken }
     } = req
 
     if (!accessToken) {
-      return res.status(400).send({ message: 'User not authenticated.' })
+      throw new Error('User not authenticated.')
     }
 
     const { id } = verify(accessToken, tokenSecret) as JwtPayload & {
@@ -152,6 +152,42 @@ export const verifyUser = async (req: IRequest<string>, res: Response) => {
 
     return res.json(user)
   } catch (error) {
+    return res.status(401).send({ message: (error as Error).message })
+  }
+}
+
+export const verifyEmail = async (req: IRequest<boolean>, res: Response) => {
+  let transaction: Transaction | undefined
+
+  try {
+    const {
+      params: { userId }
+    } = req
+
+    transaction = await getTransaction()
+
+    const user = await User.findByPk(userId)
+    if (!user) {
+      throw new Error('Invalid user id.')
+    }
+
+    if (!!user.verified) {
+      throw new Error('Email already verified.')
+    }
+
+    await user.update({ verified: true })
+
+    return res.json({
+      id: user.id,
+      email: user.email,
+      lastName: user.lastName,
+      firstName: user.firstName
+    })
+  } catch (error) {
+    if (transaction) {
+      await transaction.rollback()
+    }
+
     return res.status(400).send({ message: (error as Error).message })
   }
 }

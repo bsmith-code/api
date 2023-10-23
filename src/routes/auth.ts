@@ -2,15 +2,25 @@
 import express from 'express'
 
 // Controllers
-import { registerUser, authenticateUser, verifyUser } from 'controllers/auth'
+import {
+  verifyUser,
+  verifyEmail,
+  registerUser,
+  authenticateUser
+} from 'controllers/auth'
 
 // Middleware
 import { validateAuthenticateUser, validateRegisterUser } from 'middleware/auth'
 
 const authRouter = express.Router()
 
-authRouter.post('/authenticate', validateAuthenticateUser(), authenticateUser)
-authRouter.get('/verify', verifyUser)
-authRouter.post('/register', validateRegisterUser(), registerUser)
+authRouter.get('/verifyUser', verifyUser)
+authRouter.get('/verifyEmail/:userId', verifyEmail)
+authRouter.post('/registerUser', validateRegisterUser(), registerUser)
+authRouter.post(
+  '/authenticateUser',
+  validateAuthenticateUser(),
+  authenticateUser
+)
 
 export default authRouter
