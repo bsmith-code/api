@@ -27,7 +27,7 @@ export const sendVerificationEmail = async ({ id, email }: IAuthUser) => {
     subject: 'Please Verify Your Email Address',
     html: `
 
-      <a href="http://auth.brianmatthewsmith.local:3002?verifyEmail=${id}" target="_blank">Verify Email</a>
+      <a href="http://auth.brianmatthewsmith.local:3002?verifyUser=${id}" target="_blank">Verify Email</a>
 
     `
   }
@@ -101,17 +101,14 @@ export const authenticateUser = async (
       }
     })
 
-    if (!user) {
+    const isValidPassword = compareSync(password, user?.password ?? '')
+
+    if (!user || !isValidPassword) {
       throw new Error('Invalid email or password.')
     }
 
     if (!user.verified) {
       throw new Error('Email is not verified.')
-    }
-
-    const isValidPassword = compareSync(password, user.password)
-    if (!isValidPassword) {
-      throw new Error('Invalid email or password.')
     }
 
     const accessToken = sign(
@@ -135,7 +132,7 @@ export const authenticateUser = async (
   }
 }
 
-export const verifyUser = async (req: IRequest, res: Response) => {
+export const getUserSession = async (req: IRequest, res: Response) => {
   try {
     const {
       cookies: { accessToken }
@@ -156,7 +153,7 @@ export const verifyUser = async (req: IRequest, res: Response) => {
   }
 }
 
-export const verifyEmail = async (req: IRequest<boolean>, res: Response) => {
+export const verifyUser = async (req: IRequest<boolean>, res: Response) => {
   let transaction: Transaction | undefined
 
   try {

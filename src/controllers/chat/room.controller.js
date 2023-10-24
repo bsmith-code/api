@@ -16,7 +16,7 @@ exports.getRoomById = async (req, res) => {
   res.json(room)
 }
 
-exports.getUserRooms = async (req, res) => {
+exports.getUserSessionRooms = async (req, res) => {
   const {
     headers: { authorization }
   } = req
@@ -141,10 +141,10 @@ exports.getRoomMembers = async (req, res) => {
     })
 
     // Aggregate Data For Response
-    const getUser = userId => users.find(user => user.id === userId)
+    const getUserSession = userId => users.find(user => user.id === userId)
     const prepareMembers = membersArr =>
       membersArr.map(member => {
-        const { firstName, lastName, email } = getUser(member.userId)
+        const { firstName, lastName, email } = getUserSession(member.userId)
         return {
           ...member,
           profile: {

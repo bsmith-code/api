@@ -4,8 +4,8 @@ import express from 'express'
 // Controllers
 import {
   verifyUser,
-  verifyEmail,
   registerUser,
+  getUserSession,
   authenticateUser
 } from 'controllers/auth'
 
@@ -14,13 +14,10 @@ import { validateAuthenticateUser, validateRegisterUser } from 'middleware/auth'
 
 const authRouter = express.Router()
 
-authRouter.get('/verifyUser', verifyUser)
-authRouter.get('/verifyEmail/:userId', verifyEmail)
-authRouter.post('/registerUser', validateRegisterUser(), registerUser)
-authRouter.post(
-  '/authenticateUser',
-  validateAuthenticateUser(),
-  authenticateUser
-)
+authRouter.get('/session', getUserSession)
+authRouter.post('/register', validateRegisterUser(), registerUser)
+authRouter.post('/login', validateAuthenticateUser(), authenticateUser)
+
+authRouter.get('/verify/:userId', verifyUser)
 
 export default authRouter
