@@ -117,7 +117,7 @@ export const loginUser = async (
       },
       tokenSecret,
       {
-        expiresIn: '30m'
+        expiresIn: '1s'
       }
     )
 

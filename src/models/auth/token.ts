@@ -7,7 +7,6 @@ import {
   DataType,
   AllowNull,
   CreatedAt,
-  UpdatedAt,
   PrimaryKey,
   ForeignKey
 } from 'sequelize-typescript'
@@ -32,7 +31,4 @@ export class Token extends Model {
 
   @CreatedAt
   createdAt?: Date
-
-  @UpdatedAt
-  updatedAt?: Date
 }

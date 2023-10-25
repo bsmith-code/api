@@ -11,12 +11,16 @@ import {
 } from 'controllers/auth'
 
 // Middleware
-import { validateLoginUser, validateRegisterUser } from 'middleware/auth'
+import {
+  validateAndRefreshToken,
+  validateLoginUser,
+  validateRegisterUser
+} from 'middleware/auth'
 
 const authRouter = express.Router()
 
 // Protected
-authRouter.get('/session', getUserSession)
+authRouter.get('/session', validateAndRefreshToken, getUserSession)
 authRouter.post('/logout', logoutUser)
 
 // Public
