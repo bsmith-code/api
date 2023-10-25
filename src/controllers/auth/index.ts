@@ -2,7 +2,7 @@
 import { compareSync, hashSync } from 'bcryptjs'
 import { Transaction } from 'sequelize'
 import { Response } from 'express'
-import { JwtPayload, sign, verify } from 'jsonwebtoken'
+import { JwtPayload, sign, verify, decode } from 'jsonwebtoken'
 
 // DB
 import { getTransaction } from 'database'
@@ -127,6 +127,29 @@ export const loginUser = async (
       lastName: user.lastName,
       firstName: user.firstName
     })
+  } catch (error) {
+    return res.status(400).send({ message: (error as Error).message })
+  }
+}
+
+export const logoutUser = (req: IRequest, res: Response) => {
+  try {
+    const {
+      cookies: { accessToken }
+    } = req
+
+    if (!accessToken) {
+      throw new Error('User not authenticated.')
+    }
+
+    // TODO: Remove refresh token by user id
+    const { id } = decode(accessToken) as JwtPayload & {
+      id: string
+    }
+
+    return res
+      .cookie('accessToken', '', { ...cookieOptions, maxAge: -1 })
+      .send()
   } catch (error) {
     return res.status(400).send({ message: (error as Error).message })
   }
