@@ -30,7 +30,7 @@ export const validateRegisterUser = () => {
   return [requiredFields, emailFields]
 }
 
-export const validateAuthenticateUser = () => {
+export const validateLoginUser = () => {
   const requiredFields = body([FORM_EMAIL, FORM_PASSWORD])
     .trim()
     .notEmpty()

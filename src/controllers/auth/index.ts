@@ -84,7 +84,7 @@ export const registerUser = async (
   }
 }
 
-export const authenticateUser = async (
+export const loginUser = async (
   req: IRequest<Pick<IAuthUser, 'email' | 'password'>>,
   res: TUserResponse
 ) => {

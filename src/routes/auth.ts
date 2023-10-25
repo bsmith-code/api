@@ -6,17 +6,17 @@ import {
   verifyUser,
   registerUser,
   getUserSession,
-  authenticateUser
+  loginUser
 } from 'controllers/auth'
 
 // Middleware
-import { validateAuthenticateUser, validateRegisterUser } from 'middleware/auth'
+import { validateLoginUser, validateRegisterUser } from 'middleware/auth'
 
 const authRouter = express.Router()
 
 authRouter.get('/session', getUserSession)
 authRouter.post('/register', validateRegisterUser(), registerUser)
-authRouter.post('/login', validateAuthenticateUser(), authenticateUser)
+authRouter.post('/login', validateLoginUser(), loginUser)
 
 authRouter.get('/verify/:userId', verifyUser)
 
