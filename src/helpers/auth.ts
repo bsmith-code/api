@@ -20,3 +20,6 @@ export const cookieOptions: CookieOptions = {
   domain: getDomain(),
   expires: dayjs().add(30, 'days').toDate()
 }
+
+export const signAccessToken = (userId: string) => {}
+export const signRefreshToken = (accessToken: string) => {}
