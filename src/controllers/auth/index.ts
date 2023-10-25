@@ -16,6 +16,7 @@ import { transporter, validateForm, verifyReCaptcha } from 'helpers/forms'
 
 // Types
 import { IAuthUser, IAuthUserCreate, IRequest } from 'types'
+import { Token } from 'models/auth'
 
 type TUserResponse = Response<Partial<IAuthUser> | { message: string }>
 const tokenSecret = process.env.ENV_TOKEN_SECRET ?? ''
@@ -120,6 +121,9 @@ export const loginUser = async (
         expiresIn: '1s'
       }
     )
+    const refreshToken = sign({}, accessToken, { expiresIn: '7d' })
+
+    await Token.create({ userId: user.id, refreshToken })
 
     return res.cookie('accessToken', accessToken, cookieOptions).json({
       id: user.id,

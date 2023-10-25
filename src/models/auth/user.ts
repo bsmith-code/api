@@ -5,8 +5,6 @@ import {
   Default,
   DataType,
   AllowNull,
-  CreatedAt,
-  UpdatedAt,
   PrimaryKey
 } from 'sequelize-typescript'
 
@@ -38,10 +36,4 @@ export class User extends Model {
   @Default(false)
   @Column(DataType.BOOLEAN)
   verified!: boolean
-
-  @CreatedAt
-  createdAt?: Date
-
-  @UpdatedAt
-  updatedAt?: Date
 }

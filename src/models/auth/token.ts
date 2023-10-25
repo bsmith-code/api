@@ -6,7 +6,6 @@ import {
   Default,
   DataType,
   AllowNull,
-  CreatedAt,
   PrimaryKey,
   ForeignKey
 } from 'sequelize-typescript'
@@ -28,7 +27,4 @@ export class Token extends Model {
   @AllowNull(false)
   @Column(DataType.STRING)
   refreshToken!: string
-
-  @CreatedAt
-  createdAt?: Date
 }

@@ -5,7 +5,7 @@ import { Sequelize } from 'sequelize-typescript'
 import { dbConfig } from 'config'
 
 // Models
-import { User } from 'models/auth/user'
+import { User, Token } from 'models/auth'
 
 const sequelize = new Sequelize(dbConfig)
 
@@ -13,7 +13,7 @@ export const connect = async () => {
   try {
     await sequelize.authenticate()
 
-    sequelize.addModels([User])
+    sequelize.addModels([User, Token])
     await sequelize.sync({ force: false, alter: true })
 
     console.log('Database connection established.')

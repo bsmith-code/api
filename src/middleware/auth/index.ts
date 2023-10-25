@@ -1,5 +1,11 @@
 // Common
 import { body } from 'express-validator'
+import { NextFunction, Response } from 'express'
+import { JwtPayload, decode, verify } from 'jsonwebtoken'
+import dayjs from 'dayjs'
+
+// Models
+import { Token } from 'models/auth'
 
 // Constants
 import {
@@ -9,9 +15,9 @@ import {
   FORM_LAST_NAME,
   FORM_FIRST_NAME
 } from 'constants/forms'
+
+// Types
 import { IRequest } from 'types'
-import { NextFunction, Response } from 'express'
-import { JwtPayload, verify } from 'jsonwebtoken'
 
 const tokenSecret = process.env.ENV_TOKEN_SECRET ?? ''
 
@@ -49,30 +55,41 @@ export const validateLoginUser = () => {
   return [requiredFields, emailFields]
 }
 
-export const validateAndRefreshToken = (
+export const validateAndRefreshToken = async (
   req: IRequest,
   res: Response,
   next: NextFunction
 ) => {
-  let token
-  try {
-    const {
-      cookies: { accessToken }
-    } = req
+  const {
+    cookies: { accessToken }
+  } = req
 
+  const { id, exp } = decode(accessToken) as JwtPayload & {
+    id: string
+  }
+
+  if (dayjs().isAfter(exp)) {
+    try {
+      const token = await Token.findOne({ where: { user: id } })
+      verify(token?.refreshToken ?? '', accessToken)
+    } catch (error) {
+      const { message } = error as Error
+      return res.status(401).send({ message })
+    }
+  }
+
+  try {
     if (!accessToken) {
       throw new Error('User not authenticated.')
     }
 
-    token = verify(accessToken, tokenSecret) as JwtPayload & {
-      id: string
-    }
+    verify(accessToken, tokenSecret)
 
     next()
   } catch (error) {
     const { message } = error as Error
     if (message === 'jwt expired') {
-      console.log(token)
+      //
     }
     return res.status(401).send({ message })
   }
