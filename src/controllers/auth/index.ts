@@ -112,6 +112,14 @@ export const loginUser = async (
     const accessToken = signAccessToken(user.id)
     const refreshToken = signRefreshToken(accessToken)
 
+    const currentRefreshToken = await Token.findOne({
+      where: { userId: user.id }
+    })
+
+    if (currentRefreshToken) {
+      await Token.destroy({ where: { userId: user.id } })
+    }
+
     await Token.create({ userId: user.id, refreshToken })
 
     return res.cookie('accessToken', accessToken, cookieOptions).json({
@@ -151,19 +159,21 @@ export const logoutUser = (req: IRequest, res: Response) => {
 export const getUserSession = async (req: IRequest, res: Response) => {
   try {
     const {
-      cookies: { accessToken }
-    } = req
+      locals: { userId }
+    } = res
 
-    if (!accessToken) {
-      throw new Error('User not authenticated.')
+    const user = await User.findByPk(userId as string)
+
+    if (!user) {
+      throw new Error('User not found.')
     }
 
-    const { id } = verify(accessToken, tokenSecret) as JwtPayload & {
-      id: string
-    }
-    const user = await User.findByPk(id)
-
-    return res.json(user)
+    return res.json({
+      id: user.id,
+      email: user.email,
+      lastName: user.lastName,
+      firstName: user.firstName
+    })
   } catch (error) {
     return res.status(401).send({ message: (error as Error).message })
   }

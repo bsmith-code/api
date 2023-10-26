@@ -7,6 +7,9 @@ import dayjs from 'dayjs'
 // Models
 import { Token } from 'models/auth'
 
+// Utils
+import { cookieOptions, signAccessToken } from 'helpers/auth'
+
 // Constants
 import {
   FORM_EMAIL,
@@ -64,33 +67,32 @@ export const validateAndRefreshToken = async (
     cookies: { accessToken }
   } = req
 
+  if (!accessToken) {
+    return res.status(401).send({ message: 'User not authenticated.' })
+  }
+
   const { id, exp } = decode(accessToken) as JwtPayload & {
     id: string
   }
 
-  if (dayjs().isAfter(exp)) {
-    try {
-      const token = await Token.findOne({ where: { user: id } })
-      verify(token?.refreshToken ?? '', accessToken)
-    } catch (error) {
-      const { message } = error as Error
-      return res.status(401).send({ message })
-    }
-  }
+  res.locals.userId = id
 
   try {
-    if (!accessToken) {
-      throw new Error('User not authenticated.')
+    if (dayjs().isAfter(exp)) {
+      const token = await Token.findOne({ where: { userId: id } })
+      console.log('SHOULD SEE ME?', accessToken)
+      verify(token?.refreshToken ?? '', accessToken)
+
+      const newAccessToken = signAccessToken(id)
+      console.log('NEWTOKEN', newAccessToken)
+      res.cookie('accessToken', newAccessToken, cookieOptions)
+    } else {
+      verify(accessToken, tokenSecret)
     }
-
-    verify(accessToken, tokenSecret)
-
-    next()
   } catch (error) {
     const { message } = error as Error
-    if (message === 'jwt expired') {
-      //
-    }
     return res.status(401).send({ message })
   }
+
+  next()
 }
