@@ -117,7 +117,7 @@ export const loginUser = async (
     })
 
     if (currentRefreshToken) {
-      await Token.destroy({ where: { userId: user.id } })
+      await Token.destroy({ where: { id: currentRefreshToken.id } })
     }
 
     await Token.create({ userId: user.id, refreshToken })

@@ -81,7 +81,7 @@ export const validateAndRefreshToken = async (
   try {
     if (dayjs().isAfter(exp)) {
       const token = await Token.findOne({ where: { userId } })
-      console.log(token?.refreshToken ?? '', `${tokenSecret}${id}`)
+      console.log(decode(token?.refreshToken ?? ''))
       verify(token?.refreshToken ?? '', `${tokenSecret}${id}`)
 
       const newAccessToken = signAccessToken(userId)
