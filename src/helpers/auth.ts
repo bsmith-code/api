@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
 import { CookieOptions } from 'express'
-import { sign } from 'jsonwebtoken'
+import { JwtPayload, decode, sign } from 'jsonwebtoken'
+import uniqid from 'uniqid'
 
 const env = process.env.NODE_ENV ?? 'production'
 const tokenSecret = process.env.ENV_TOKEN_SECRET ?? ''
@@ -26,7 +27,8 @@ export const cookieOptions: CookieOptions = {
 export const signAccessToken = (userId: string) =>
   sign(
     {
-      id: userId
+      id: uniqid(),
+      userId
     },
     tokenSecret,
     {
@@ -34,5 +36,8 @@ export const signAccessToken = (userId: string) =>
     }
   )
 
-export const signRefreshToken = (accessToken: string) =>
-  sign({}, accessToken, { expiresIn: '7d' })
+export const signRefreshToken = (accessToken: string) => {
+  const { id } = decode(accessToken) as JwtPayload & { id: string }
+
+  return sign({}, `${tokenSecret}${id}`, { expiresIn: '7d' })
+}

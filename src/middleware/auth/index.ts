@@ -71,20 +71,19 @@ export const validateAndRefreshToken = async (
     return res.status(401).send({ message: 'User not authenticated.' })
   }
 
-  const { id, exp } = decode(accessToken) as JwtPayload & {
+  const { id, userId, exp } = decode(accessToken) as JwtPayload & {
     id: string
+    userId: string
   }
 
-  res.locals.userId = id
+  res.locals.userId = userId
 
   try {
     if (dayjs().isAfter(exp)) {
-      const token = await Token.findOne({ where: { userId: id } })
-      console.log('SHOULD SEE ME?', accessToken)
-      verify(token?.refreshToken ?? '', accessToken)
+      const token = await Token.findOne({ where: { userId } })
+      verify(token?.refreshToken ?? '', `${tokenSecret}${id}`)
 
       const newAccessToken = signAccessToken(id)
-      console.log('NEWTOKEN', newAccessToken)
       res.cookie('accessToken', newAccessToken, cookieOptions)
     } else {
       verify(accessToken, tokenSecret)
