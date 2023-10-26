@@ -32,7 +32,7 @@ export const signAccessToken = (userId: string) =>
     },
     tokenSecret,
     {
-      expiresIn: '10s'
+      expiresIn: '2s'
     }
   )
 
