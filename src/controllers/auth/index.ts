@@ -121,8 +121,8 @@ export const loginUser = async (
 
     await Token.create({
       userId: user.id,
-      refreshToken,
-      accessTokenId: decode(accessToken)?.id as JwtPayload & { id: string }
+      refreshToken
+      // accessTokenId: decode(accessToken)?.id as JwtPayload & { id: string }
     })
 
     return res.cookie('accessToken', accessToken, cookieOptions).json({
