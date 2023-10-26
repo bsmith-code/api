@@ -36,9 +36,4 @@ export const signAccessToken = (userId: string) =>
     }
   )
 
-export const signRefreshToken = (accessToken: string) => {
-  const { id } = decode(accessToken) as JwtPayload & { id: string }
-
-  console.warn('id', id)
-  return sign({}, `${tokenSecret}${id}`, { expiresIn: '7d' })
-}
+export const signRefreshToken = () => sign({}, tokenSecret, { expiresIn: '7d' })

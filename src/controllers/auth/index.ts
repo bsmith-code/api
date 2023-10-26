@@ -2,7 +2,7 @@
 import { compareSync, hashSync } from 'bcryptjs'
 import { Transaction } from 'sequelize'
 import { Response } from 'express'
-import { JwtPayload, verify, decode } from 'jsonwebtoken'
+import { JwtPayload, decode } from 'jsonwebtoken'
 
 // DB
 import { getTransaction } from 'database'
@@ -18,7 +18,6 @@ import { transporter, validateForm, verifyReCaptcha } from 'helpers/forms'
 import { IAuthUser, IAuthUserCreate, IRequest } from 'types'
 
 type TUserResponse = Response<Partial<IAuthUser> | { message: string }>
-const tokenSecret = process.env.ENV_TOKEN_SECRET ?? ''
 
 export const sendVerificationEmail = async ({ id, email }: IAuthUser) => {
   const mailData = {
@@ -110,7 +109,7 @@ export const loginUser = async (
     }
 
     const accessToken = signAccessToken(user.id)
-    const refreshToken = signRefreshToken(accessToken)
+    const refreshToken = signRefreshToken()
 
     const currentRefreshToken = await Token.findOne({
       where: { userId: user.id }
@@ -120,7 +119,11 @@ export const loginUser = async (
       await Token.destroy({ where: { id: currentRefreshToken.id } })
     }
 
-    await Token.create({ userId: user.id, refreshToken })
+    await Token.create({
+      userId: user.id,
+      refreshToken,
+      accessTokenId: decode(accessToken)?.id as JwtPayload & { id: string }
+    })
 
     return res.cookie('accessToken', accessToken, cookieOptions).json({
       id: user.id,
