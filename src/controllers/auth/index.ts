@@ -2,21 +2,20 @@
 import { compareSync, hashSync } from 'bcryptjs'
 import { Transaction } from 'sequelize'
 import { Response } from 'express'
-import { JwtPayload, sign, verify, decode } from 'jsonwebtoken'
+import { JwtPayload, verify, decode } from 'jsonwebtoken'
 
 // DB
 import { getTransaction } from 'database'
 
 // Models
-import { User } from 'models/auth'
+import { User, Token } from 'models/auth'
 
 // Utils
-import { cookieOptions } from 'helpers/auth'
+import { cookieOptions, signAccessToken, signRefreshToken } from 'helpers/auth'
 import { transporter, validateForm, verifyReCaptcha } from 'helpers/forms'
 
 // Types
 import { IAuthUser, IAuthUserCreate, IRequest } from 'types'
-import { Token } from 'models/auth'
 
 type TUserResponse = Response<Partial<IAuthUser> | { message: string }>
 const tokenSecret = process.env.ENV_TOKEN_SECRET ?? ''
@@ -27,9 +26,7 @@ export const sendVerificationEmail = async ({ id, email }: IAuthUser) => {
     to: email,
     subject: 'Please Verify Your Email Address',
     html: `
-
       <a href="http://auth.brianmatthewsmith.local:3002?verifyUser=${id}" target="_blank">Verify Email</a>
-
     `
   }
 
@@ -112,16 +109,8 @@ export const loginUser = async (
       throw new Error('Email is not verified.')
     }
 
-    const accessToken = sign(
-      {
-        id: user.id
-      },
-      tokenSecret,
-      {
-        expiresIn: '1s'
-      }
-    )
-    const refreshToken = sign({}, accessToken, { expiresIn: '7d' })
+    const accessToken = signAccessToken(user.id)
+    const refreshToken = signRefreshToken(accessToken)
 
     await Token.create({ userId: user.id, refreshToken })
 
