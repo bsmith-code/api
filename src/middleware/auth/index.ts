@@ -86,6 +86,7 @@ export const validateAndRefreshToken = async (
       verify(accessToken, tokenSecret)
     }
   } catch (error) {
+    // TODO: Logout
     const { message } = error as Error
     return res.status(401).send({ message })
   }
