@@ -21,11 +21,11 @@ const authRouter = express.Router()
 
 // Protected
 authRouter.get('/session', validateAndRefreshToken, getUserSession)
-authRouter.post('/logout', logoutUser)
 
 // Public
-authRouter.post('/register', validateRegisterUser(), registerUser)
-authRouter.post('/login', validateLoginUser(), loginUser)
+authRouter.post('/logout', logoutUser)
 authRouter.get('/verify/:userId', verifyUser)
+authRouter.post('/login', validateLoginUser(), loginUser)
+authRouter.post('/register', validateRegisterUser(), registerUser)
 
 export default authRouter

@@ -135,7 +135,7 @@ export const loginUser = async (
   }
 }
 
-export const logoutUser = (req: IRequest, res: Response) => {
+export const logoutUser = async (req: IRequest, res: Response) => {
   try {
     const {
       cookies: { accessToken }
@@ -145,10 +145,8 @@ export const logoutUser = (req: IRequest, res: Response) => {
       throw new Error('User not authenticated.')
     }
 
-    // TODO: Remove refresh token by user id
-    const { id } = decode(accessToken) as JwtPayload & {
-      id: string
-    }
+    const { userId } = decode(accessToken) as JwtPayload
+    await Token.destroy({ where: { userId } })
 
     return res
       .cookie('accessToken', '', { ...cookieOptions, maxAge: -1 })
