@@ -162,7 +162,7 @@ export const getUserSession = async (req: IRequest, res: Response) => {
       locals: { userId }
     } = res
 
-    const user = await User.findByPk(userId as string)
+    const user = await User.findByPk(userId)
 
     if (!user) {
       throw new Error('User not found.')
