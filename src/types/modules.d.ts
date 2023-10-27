@@ -1,7 +1,7 @@
-import { JwtPayload } from 'jsonwebtoken'
+import { JwtPayload as JsonWebToken } from 'jsonwebtoken'
 
-// declare module 'jsonwebtoken' {
-interface JwtPayload {
-  id: string
+declare module 'jsonwebtoken' {
+  interface JwtPayload {
+    userId: string
+  }
 }
-// }

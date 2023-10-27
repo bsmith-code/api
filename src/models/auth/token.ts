@@ -27,8 +27,4 @@ export class Token extends Model {
   @AllowNull(false)
   @Column(DataType.STRING)
   refreshToken!: string
-
-  @AllowNull(false)
-  @Column(DataType.STRING)
-  accessTokenId!: string
 }
