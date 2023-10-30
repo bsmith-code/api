@@ -5,7 +5,7 @@ import { Response } from 'express'
 import { JwtPayload, decode } from 'jsonwebtoken'
 
 // DB
-import { getTransaction } from 'database'
+import { getTransaction } from 'database/index'
 
 // Models
 import { User, Token } from 'models/auth'

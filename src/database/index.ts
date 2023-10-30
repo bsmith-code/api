@@ -2,7 +2,7 @@
 import { Sequelize } from 'sequelize-typescript'
 
 // Configs
-import { dbConfig } from 'config'
+import { dbConfig } from 'config/index'
 
 // Models
 import { User, Token } from 'models/auth'

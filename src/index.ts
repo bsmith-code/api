@@ -5,7 +5,9 @@ import compression from 'compression'
 import cors, { CorsOptions } from 'cors'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
-import { connect } from 'database'
+
+// Database
+import { connect } from 'database/index'
 
 // Routes
 import routes from 'routes/index'
