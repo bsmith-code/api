@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "start": "dotenv -e .env -- ts-node-dev -r tsconfig-paths/register --respawn src",
-    "build": "tsc && resolve-tspaths",
+    "build": "dotenv -e .env tsc && resolve-tspaths",
     "postbuild": "cp package.json build && cp yarn.lock build && cd build && yarn install --frozen-lockfile --production",
     "lint": "eslint src/**/*.ts",
     "format": "eslint src/**/*.ts --fix",

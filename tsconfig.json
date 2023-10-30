@@ -4,11 +4,14 @@
     "baseUrl": "src",
     "outDir": "build",
     "paths": {
-      "routes/*": ["./routes/*"],
-      "controllers/*": ["./controllers/*"],
-      "middleware/*": ["./middleware/*"],
+      "config/*": ["./config/*"],
       "constants/*": ["./constants/*"],
-      "helpers/*": ["./helpers/*"]
+      "controllers/*": ["./controllers/*"],
+      "database/*": ["./database/*"],
+      "helpers/*": ["./helpers/*"],
+      "middleware/*": ["./middleware/*"],
+      "models/*": ["./models/*"],
+      "routes/*": ["./routes/*"],
     },
     "experimentalDecorators": true
   },
