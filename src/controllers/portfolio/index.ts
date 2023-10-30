@@ -3,7 +3,7 @@ import { Response } from 'express'
 import SMTPTransport from 'nodemailer/lib/smtp-transport'
 
 // Utils
-import { transporter, validateForm, verifyReCaptcha } from 'helpers'
+import { transporter, validateForm, verifyReCaptcha } from 'helpers/forms'
 
 // Types
 import { IRequest, IPortfolioEmail } from 'types'
