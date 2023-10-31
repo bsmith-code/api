@@ -25,7 +25,9 @@ export const sendVerificationEmail = async ({ id, email }: IAuthUser) => {
     to: email,
     subject: 'Please Verify Your Email Address',
     html: `
-      <a href="http://auth.brianmatthewsmith.local:3002?verifyUser=${id}" target="_blank">Verify Email</a>
+      <a href="${
+        process.env?.ENV_AUTH_BASE_URL ?? ''
+      }?verifyUser=${id}" target="_blank">Verify Email</a>
     `
   }
 
