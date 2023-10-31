@@ -4,8 +4,9 @@
   "version": "2.0.0",
   "main": "index.ts",
   "scripts": {
-    "start": "dotenv -e .env -- ts-node-dev -r tsconfig-paths/register --respawn src",
+    "start": "dotenv -e .env.local -- ts-node-dev -r tsconfig-paths/register --respawn src",
     "build": "tsc && resolve-tspaths",
+    "postbuild": "cp package.json build && cp yarn.lock build && cp .env.prod build/.env",
     "lint": "eslint src/**/*.ts",
     "format": "eslint src/**/*.ts --fix",
     "pretty": "prettier --write \"src/**/*.ts\""
