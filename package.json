@@ -6,7 +6,7 @@
   "scripts": {
     "start": "dotenv -e .env.local -- ts-node-dev -r tsconfig-paths/register --respawn src",
     "build": "tsc && resolve-tspaths",
-    "postbuild": "cp package.json build && cp yarn.lock build && cp .env.prod build/.env",
+    "postbuild": "cp package.json build && cp yarn.lock build",
     "lint": "eslint src/**/*.ts",
     "format": "eslint src/**/*.ts --fix",
     "pretty": "prettier --write \"src/**/*.ts\""
