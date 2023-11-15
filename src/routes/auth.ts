@@ -6,21 +6,25 @@ import {
   loginUser,
   verifyUser,
   logoutUser,
+  updateUser,
   registerUser,
-  getUserSession
+  getUserSession,
+  getUsers
 } from 'controllers/auth'
 
 // Middleware
 import {
-  validateAndRefreshToken,
   validateLoginUser,
-  validateRegisterUser
+  validateRegisterUser,
+  validateAndRefreshToken
 } from 'middleware/auth'
 
 const authRouter = express.Router()
 
 // Protected
 authRouter.get('/session', validateAndRefreshToken, getUserSession)
+authRouter.get('/users', validateAndRefreshToken, getUsers)
+authRouter.put('/users/:userId', validateAndRefreshToken, updateUser)
 
 // Public
 authRouter.post('/logout', logoutUser)

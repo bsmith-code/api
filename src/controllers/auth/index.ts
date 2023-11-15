@@ -15,7 +15,7 @@ import { cookieOptions, signAccessToken, signRefreshToken } from 'helpers/auth'
 import { transporter, validateForm, verifyReCaptcha } from 'helpers/forms'
 
 // Types
-import { IAuthUser, IAuthUserCreate, IRequest } from 'types'
+import { IAuthUser, IAuthUserCreate, IRequest, IUser } from 'types'
 
 type TUserResponse = Response<Partial<IAuthUser> | { message: string }>
 
@@ -65,12 +65,7 @@ export const registerUser = async (
 
       await sendVerificationEmail(user)
 
-      return res.json({
-        id: user.id,
-        email: user.email,
-        lastName: user.lastName,
-        firstName: user.firstName
-      })
+      return res.json(user)
     }
 
     return res.status(400).send({ message: 'Email unavailable.' })
@@ -126,12 +121,7 @@ export const loginUser = async (
       refreshToken
     })
 
-    return res.cookie('accessToken', accessToken, cookieOptions).json({
-      id: user.id,
-      email: user.email,
-      lastName: user.lastName,
-      firstName: user.firstName
-    })
+    return res.cookie('accessToken', accessToken, cookieOptions).json(user)
   } catch (error) {
     return res.status(400).send({ message: (error as Error).message })
   }
@@ -158,7 +148,7 @@ export const logoutUser = async (req: IRequest, res: Response) => {
   }
 }
 
-export const getUserSession = async (req: IRequest, res: Response) => {
+export const getUserSession = async (req: IRequest, res: TUserResponse) => {
   try {
     const {
       locals: { userId }
@@ -170,18 +160,16 @@ export const getUserSession = async (req: IRequest, res: Response) => {
       throw new Error('User not found.')
     }
 
-    return res.json({
-      id: user.id,
-      email: user.email,
-      lastName: user.lastName,
-      firstName: user.firstName
-    })
+    return res.json(user)
   } catch (error) {
     return res.status(401).send({ message: (error as Error).message })
   }
 }
 
-export const verifyUser = async (req: IRequest<boolean>, res: Response) => {
+export const verifyUser = async (
+  req: IRequest<boolean>,
+  res: TUserResponse
+) => {
   let transaction: Transaction | undefined
 
   try {
@@ -202,12 +190,45 @@ export const verifyUser = async (req: IRequest<boolean>, res: Response) => {
 
     await user.update({ verified: true })
 
-    return res.json({
-      id: user.id,
-      email: user.email,
-      lastName: user.lastName,
-      firstName: user.firstName
-    })
+    return res.json(user)
+  } catch (error) {
+    if (transaction) {
+      await transaction.rollback()
+    }
+
+    return res.status(400).send({ message: (error as Error).message })
+  }
+}
+
+export const getUsers = async (req: IRequest, res: Response) => {
+  try {
+    const users = await User.findAll()
+
+    return res.json(users)
+  } catch (error) {
+    return res.status(400).send({ message: (error as Error).message })
+  }
+}
+
+export const updateUser = async (req: IRequest, res: TUserResponse) => {
+  let transaction: Transaction | undefined
+
+  try {
+    const {
+      params: { userId },
+      body
+    } = req
+
+    transaction = await getTransaction()
+
+    const user = await User.findByPk(userId)
+    if (!user) {
+      throw new Error('Invalid user id.')
+    }
+
+    await user.update(body as unknown as IAuthUser)
+
+    return res.json(user)
   } catch (error) {
     if (transaction) {
       await transaction.rollback()

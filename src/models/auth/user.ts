@@ -5,9 +5,15 @@ import {
   Default,
   DataType,
   AllowNull,
-  PrimaryKey
+  PrimaryKey,
+  DefaultScope
 } from 'sequelize-typescript'
 
+@DefaultScope(() => ({
+  attributes: {
+    exclude: ['createdAt', 'updatedAt', 'password', 'verified']
+  }
+}))
 @Table({ tableName: 'user' })
 export class User extends Model {
   @PrimaryKey
