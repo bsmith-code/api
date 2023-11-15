@@ -1,13 +1,8 @@
-// Common
-import { Sequelize } from 'sequelize-typescript'
-
 // Configs
-import { dbConfig } from 'config/index'
+import sequelize from 'config/index'
 
 // Models
 import { User, Token, Permission } from 'models/auth'
-
-const sequelize = new Sequelize(dbConfig)
 
 export const connect = async () => {
   try {

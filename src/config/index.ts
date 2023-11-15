@@ -1,8 +1,12 @@
-import { SequelizeOptions } from 'sequelize-typescript'
+import { Sequelize } from 'sequelize-typescript'
 
-export const dbConfig: SequelizeOptions = {
-  database: process.env.ENV_DB_NAME,
+const sequelize = new Sequelize({
+  port: 3306,
+  dialect: 'mysql',
+  host: process.env.ENV_DB_HOST,
   username: process.env.ENV_DB_USER,
-  password: process.env.ENV_DB_PASSWORD,
-  dialect: 'mysql'
-}
+  database: process.env.ENV_DB_NAME,
+  password: process.env.ENV_DB_PASSWORD
+})
+
+export default sequelize

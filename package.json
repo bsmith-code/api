@@ -3,9 +3,9 @@
   "private": true,
   "version": "2.0.0",
   "main": "index.ts",
-  "type": "module",
   "scripts": {
     "start": "dotenv -e .env.local -- ts-node-dev -r tsconfig-paths/register --respawn src",
+    "seed": "dotenv -e .env.local npx sequelize-cli db:seed:all",
     "build": "tsc && resolve-tspaths",
     "postbuild": "cp package.json build && cp yarn.lock build",
     "lint": "eslint src/**/*.ts",
