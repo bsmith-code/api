@@ -20,9 +20,5 @@ export const connect = async () => {
   }
 }
 
-export const close = async () => {
-  await sequelize.close()
-  console.log('Database connection closed.')
-}
-
+export const close = () => sequelize.close()
 export const getTransaction = () => sequelize.transaction()

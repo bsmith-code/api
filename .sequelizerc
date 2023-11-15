@@ -1,6 +1,26 @@
 const path = require('path');
+const tsConfigPaths = require('tsconfig-paths');
 
-require('ts-node').register()
+require('ts-node').register({
+  project: './tsconfig.json'
+})
+
+// const { paths } = require('./tsconfig.json').compilerOptions;
+
+// Register path mappings with tsconfig-paths
+tsConfigPaths.register({
+  baseUrl: 'src',
+  paths: {
+    "config/*": ["./config/*"],
+    "constants/*": ["./constants/*"],
+    "controllers/*": ["./controllers/*"],
+    "database/*": ["./database/*"],
+    "helpers/*": ["./helpers/*"],
+    "middleware/*": ["./middleware/*"],
+    "models/*": ["./models/*"],
+    "routes/*": ["./routes/*"],
+  },
+});
 
 module.exports = {
   'config': path.resolve('src', 'config', 'index.ts'),
