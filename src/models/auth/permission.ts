@@ -6,8 +6,11 @@ import {
   DataType,
   AllowNull,
   PrimaryKey,
-  DefaultScope
+  DefaultScope,
+  BelongsToMany
 } from 'sequelize-typescript'
+import { User } from 'models/auth/user'
+import { UserPermissions } from 'models/auth/userPermissions'
 
 @DefaultScope(() => ({
   attributes: {
@@ -25,4 +28,11 @@ export class Permission extends Model {
   @AllowNull(false)
   @Column(DataType.STRING)
   name!: string
+
+  @BelongsToMany(() => User, {
+    through: { model: () => UserPermissions },
+    foreignKey: 'permissionId',
+    otherKey: 'userId'
+  })
+  user?: User[]
 }

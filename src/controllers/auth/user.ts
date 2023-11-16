@@ -16,11 +16,12 @@ import { cookieOptions, signAccessToken, signRefreshToken } from 'helpers/auth'
 import { transporter, validateForm, verifyReCaptcha } from 'helpers/forms'
 
 // Types
-import { IAuthUser, IAuthUserCreate, IRequest, IUser } from 'types'
+import { IUserServer, TUserCreate, IRequest, IUserClient } from 'types'
+import { Permission } from 'models/auth'
 
-type TUserResponse = Response<Partial<IAuthUser> | { message: string }>
+type TUserResponse = Response<Partial<IUserClient> | { message: string }>
 
-export const sendVerificationEmail = async ({ id, email }: IAuthUser) => {
+export const sendVerificationEmail = async ({ id, email }: IUserClient) => {
   const mailData = {
     from: `noreply@brianmmatthewsmith.com`,
     to: email,
@@ -36,7 +37,7 @@ export const sendVerificationEmail = async ({ id, email }: IAuthUser) => {
 }
 
 export const registerUser = async (
-  req: IRequest<IAuthUserCreate>,
+  req: IRequest<TUserCreate>,
   res: TUserResponse
 ) => {
   let transaction: Transaction | undefined
@@ -80,7 +81,7 @@ export const registerUser = async (
 }
 
 export const loginUser = async (
-  req: IRequest<Pick<IAuthUser, 'email' | 'password'>>,
+  req: IRequest<Pick<IUserServer, 'email' | 'password'>>,
   res: TUserResponse
 ) => {
   try {
@@ -217,7 +218,10 @@ export const getUsers = async (req: IRequest, res: Response) => {
   }
 }
 
-export const updateUser = async (req: IRequest, res: TUserResponse) => {
+export const updateUser = async (
+  req: IRequest<IUserClient>,
+  res: TUserResponse
+) => {
   let transaction: Transaction | undefined
 
   try {
@@ -228,14 +232,22 @@ export const updateUser = async (req: IRequest, res: TUserResponse) => {
 
     transaction = await getTransaction()
 
-    const user = await User.findByPk(userId)
-    if (!user) {
+    const currentUser = await User.findByPk(userId)
+
+    if (!currentUser) {
       throw new Error('Invalid user id.')
     }
 
-    await user.update(body as unknown as IAuthUser)
+    const permissions = await Permission.findAll({
+      where: { id: body.permissions }
+    })
 
-    return res.json(user)
+    await currentUser.update(body)
+    await currentUser.$set('permissions', permissions)
+
+    const updatedUser = (await User.findByPk(userId)) as User
+
+    return res.json(updatedUser)
   } catch (error) {
     if (transaction) {
       await transaction.rollback()

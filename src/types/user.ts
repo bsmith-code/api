@@ -1,17 +1,21 @@
-export interface IUser {
+import { IPermission } from 'types/permission'
+
+export interface IUserClient {
+  id: string
   firstName: string
   lastName: string
   email: string
-  password: string
+  permissions: IPermission[]
 }
 
-export interface IAuthUser extends IUser {
-  id: string
+export interface IUserServer extends IUserClient {
   verified: boolean
-  createdAt?: Date
-  updatedAt?: Date
+  password: string
+  createdAt: Date
+  updatedAt: Date
 }
 
-export interface IAuthUserCreate extends IUser {
+export type TUserCreate = Omit<IUserClient, 'id' | 'permissions'> & {
+  password: string
   recaptcha: string
 }

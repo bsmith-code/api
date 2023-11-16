@@ -10,10 +10,14 @@ import {
   BelongsToMany,
   BeforeCreate
 } from 'sequelize-typescript'
+
 import { Permission } from 'models/auth/permission'
 import { UserPermissions } from 'models/auth/userPermissions'
 
+import { IPermission } from 'types/permission'
+
 @DefaultScope(() => ({
+  include: [Permission],
   attributes: {
     exclude: ['createdAt', 'updatedAt', 'password', 'verified']
   }
@@ -47,13 +51,10 @@ export class User extends Model {
   @Column(DataType.BOOLEAN)
   verified!: boolean
 
-  @BelongsToMany(() => Permission, () => UserPermissions)
-  permissions!: Permission[]
-
-  @BeforeCreate
-  static setDefaultValues(instance: User): void {
-    if (!instance.permissions) {
-      instance.permissions = []
-    }
-  }
+  @BelongsToMany(() => Permission, {
+    through: { model: () => UserPermissions },
+    foreignKey: 'userId',
+    otherKey: 'permissionId'
+  })
+  permissions!: IPermission[]
 }
