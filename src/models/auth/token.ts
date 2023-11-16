@@ -11,7 +11,7 @@ import {
 } from 'sequelize-typescript'
 
 // Models
-import { User } from 'models/auth'
+import { User } from 'models/auth/user'
 
 @Table({ tableName: 'token' })
 export class Token extends Model {

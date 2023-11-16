@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { Permission } from 'models/auth'
+import { Permission } from 'models/auth/permission'
 import { IRequest } from 'types'
 
 export const getPermissions = async (req: IRequest, res: Response) => {

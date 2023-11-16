@@ -1,5 +1,8 @@
 import { PERMISSIONS_ALL } from 'constants/permissions'
-import { Permission } from 'models/auth'
+import { Permission } from 'models/auth/permission'
+import sequelize from 'config/index'
+
+sequelize.addModels([Permission])
 
 export = {
   up: async () => {

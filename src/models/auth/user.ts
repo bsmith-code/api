@@ -6,8 +6,12 @@ import {
   DataType,
   AllowNull,
   PrimaryKey,
-  DefaultScope
+  DefaultScope,
+  BelongsToMany,
+  BeforeCreate
 } from 'sequelize-typescript'
+import { Permission } from 'models/auth/permission'
+import { UserPermissions } from 'models/auth/userPermissions'
 
 @DefaultScope(() => ({
   attributes: {
@@ -42,4 +46,14 @@ export class User extends Model {
   @Default(false)
   @Column(DataType.BOOLEAN)
   verified!: boolean
+
+  @BelongsToMany(() => Permission, () => UserPermissions)
+  permissions!: Permission[]
+
+  @BeforeCreate
+  static setDefaultValues(instance: User): void {
+    if (!instance.permissions) {
+      instance.permissions = []
+    }
+  }
 }

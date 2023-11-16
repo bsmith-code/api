@@ -8,7 +8,8 @@ import { JwtPayload, decode } from 'jsonwebtoken'
 import { getTransaction } from 'database/index'
 
 // Models
-import { User, Token } from 'models/auth'
+import { User } from 'models/auth/user'
+import { Token } from 'models/auth/token'
 
 // Utils
 import { cookieOptions, signAccessToken, signRefreshToken } from 'helpers/auth'

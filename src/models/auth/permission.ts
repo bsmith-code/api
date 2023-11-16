@@ -8,7 +8,6 @@ import {
   PrimaryKey,
   DefaultScope
 } from 'sequelize-typescript'
-import sequelize from 'config/index'
 
 @DefaultScope(() => ({
   attributes: {
@@ -27,4 +26,3 @@ export class Permission extends Model {
   @Column(DataType.STRING)
   name!: string
 }
-sequelize.addModels([Permission])
