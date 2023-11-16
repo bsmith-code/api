@@ -1,11 +1,8 @@
 import { PERMISSIONS_ALL } from 'constants/permissions'
-import { QueryInterface } from 'sequelize'
+import { Permission } from 'models/auth'
 
 export = {
-  up: async (queryInterface: QueryInterface) => {
-    const Permission = queryInterface.sequelize.models.Permission
-
-    console.log(queryInterface.sequelize.models)
+  up: async () => {
     // Check if the table is empty
     const rowCount = await Permission.count()
 

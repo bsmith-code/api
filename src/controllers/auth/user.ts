@@ -92,7 +92,8 @@ export const loginUser = async (
     const user = await User.findOne({
       where: {
         email
-      }
+      },
+      attributes: { include: ['password', 'verified'] }
     })
 
     const isValidPassword = compareSync(password, user?.password ?? '')
@@ -121,7 +122,12 @@ export const loginUser = async (
       refreshToken
     })
 
-    return res.cookie('accessToken', accessToken, cookieOptions).json(user)
+    return res.cookie('accessToken', accessToken, cookieOptions).json({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email
+    })
   } catch (error) {
     return res.status(400).send({ message: (error as Error).message })
   }

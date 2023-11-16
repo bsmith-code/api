@@ -2,15 +2,18 @@
 import express from 'express'
 
 // Routes
-import authProtectedRouter from 'routes/auth/authProtected'
-import authPublicRouter from 'routes/auth/authPublic'
+
+import { permissionRouter } from 'routes/auth/permission'
+import { userPublicRouter, userProtectedRouter } from 'routes/auth/user'
 
 // Middleware
 import { validateAndRefreshToken } from 'middleware/auth'
 
 const authRouter = express.Router()
 
-authRouter.use('/', validateAndRefreshToken, authProtectedRouter)
-authRouter.use('/', authPublicRouter)
+authRouter.use('/', userPublicRouter)
+authRouter.use('/', validateAndRefreshToken, userProtectedRouter)
+
+authRouter.use('/', validateAndRefreshToken, permissionRouter)
 
 export default authRouter
