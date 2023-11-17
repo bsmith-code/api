@@ -52,10 +52,11 @@ jobs:
         script: |
           cd /var/www/html/api.brianmatthewsmith.com/build
           yarn
-          cd ..
+          cd /var/www/html/api.brianmatthewsmith.com
           mkdir temp
-          mv /var/www/html/api.brianmatthewsmith.com/* temp/
-          mv /var/www/html/api.brianmatthewsmith.com/temp/build/* /var/www/html/api.brianmatthewsmith.com/
+          rsync -av --exclude='build' --exclude='temp' --remove-source-files . temp/
+          mv /var/www/html/api.brianmatthewsmith.com/build/* /var/www/html/api.brianmatthewsmith.com/
           rm -rf temp
+          rm -rf build
           yarn seed:prod
           pm2 restart api
