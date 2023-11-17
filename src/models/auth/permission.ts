@@ -9,6 +9,7 @@ import {
   DefaultScope,
   BelongsToMany
 } from 'sequelize-typescript'
+
 import { User } from 'models/auth/user'
 import { UserPermissions } from 'models/auth/userPermissions'
 
@@ -17,7 +18,7 @@ import { UserPermissions } from 'models/auth/userPermissions'
     exclude: ['createdAt', 'updatedAt']
   }
 }))
-@Table({ tableName: 'permission' })
+@Table
 export class Permission extends Model {
   @PrimaryKey
   @AllowNull(false)

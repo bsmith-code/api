@@ -13,7 +13,7 @@ import {
     exclude: ['createdAt', 'updatedAt']
   }
 }))
-@Table({ tableName: 'userPermissions' })
+@Table
 export class UserPermissions extends Model {
   @ForeignKey(() => User)
   userId!: string

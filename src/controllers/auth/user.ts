@@ -10,6 +10,7 @@ import { getTransaction } from 'database/index'
 // Models
 import { User } from 'models/auth/user'
 import { Token } from 'models/auth/token'
+import { Permission } from 'models/auth/permission'
 
 // Utils
 import { cookieOptions, signAccessToken, signRefreshToken } from 'helpers/auth'
@@ -17,7 +18,6 @@ import { transporter, validateForm, verifyReCaptcha } from 'helpers/forms'
 
 // Types
 import { IUserServer, TUserCreate, IRequest, IUserClient } from 'types'
-import { Permission } from 'models/auth'
 
 type TUserResponse = Response<Partial<IUserClient> | { message: string }>
 

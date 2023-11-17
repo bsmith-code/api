@@ -7,8 +7,7 @@ import {
   AllowNull,
   PrimaryKey,
   DefaultScope,
-  BelongsToMany,
-  BeforeCreate
+  BelongsToMany
 } from 'sequelize-typescript'
 
 import { Permission } from 'models/auth/permission'
@@ -17,12 +16,17 @@ import { UserPermissions } from 'models/auth/userPermissions'
 import { IPermission } from 'types/permission'
 
 @DefaultScope(() => ({
-  include: [Permission],
+  include: [
+    {
+      model: Permission,
+      attributes: ['id', 'name']
+    }
+  ],
   attributes: {
     exclude: ['createdAt', 'updatedAt', 'password', 'verified']
   }
 }))
-@Table({ tableName: 'user' })
+@Table
 export class User extends Model {
   @PrimaryKey
   @AllowNull(false)
