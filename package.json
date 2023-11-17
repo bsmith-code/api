@@ -8,7 +8,7 @@
     "seed:local": "dotenv -e .env.local npx sequelize-cli db:seed:all",
     "seed:prod": "dotenv -e .env npx sequelize-cli db:seed:all",
     "build": "tsc && resolve-tspaths",
-    "postbuild": "cp package.json build && cp yarn.lock build && cp .sequelizerc build",
+    "postbuild": "cp package.json build && cp yarn.lock build && cp .sequelizerc build && cp tsconfig.json build",
     "lint": "eslint src/**/*.ts",
     "format": "eslint src/**/*.ts --fix",
     "pretty": "prettier --write \"src/**/*.ts\""

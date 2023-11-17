@@ -38,7 +38,7 @@ jobs:
           username: ${{secrets.SSH_USERNAME}}
           dotfiles: true
           local: './build'
-          remote: '/var/www/html/api.brianmatthewsmith.com'
+          remote: '/var/www/html/api.brianmatthewsmith.com/build'
   scripts:
     needs: deploy
     runs-on: ubuntu-latest
@@ -50,7 +50,11 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         username: ${{ secrets.SSH_USERNAME }}
         script: |
-          cd /var/www/html/api.brianmatthewsmith.com
+          cd /var/www/html/api.brianmatthewsmith.com/build
           yarn
+          mkdir temp
+          mv /var/www/html/api.brianmatthewsmith.com/* temp/
+          mv /var/www/html/api.brianmatthewsmith.com/build/* /var/www/html/api.brianmatthewsmith.com/
+          rmdir temp
           yarn seed:prod
           pm2 restart api
