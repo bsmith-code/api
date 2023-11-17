@@ -52,6 +52,7 @@ jobs:
         script: |
           cd /var/www/html/api.brianmatthewsmith.com/build
           yarn
+          cd ..
           mkdir temp
           mv /var/www/html/api.brianmatthewsmith.com/* temp/
           mv /var/www/html/api.brianmatthewsmith.com/build/* /var/www/html/api.brianmatthewsmith.com/
