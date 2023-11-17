@@ -56,7 +56,7 @@ jobs:
           mkdir temp
           rsync -av --exclude='build' --exclude='temp' --exclude='.env' --remove-source-files /var/www/html/api.brianmatthewsmith.com/ /var/www/html/api.brianmatthewsmith.com/temp/
           find /var/www/html/api.brianmatthewsmith.com -type d -empty -delete
-          rsync -av /var/www/html/api.brianmatthewsmith.com/build/ /var/www/html/api.brianmatthewsmith.com/
+          rsync -av -ur /var/www/html/api.brianmatthewsmith.com/build/ /var/www/html/api.brianmatthewsmith.com/
           rm -rf temp
           rm -rf build
           yarn seed:prod
