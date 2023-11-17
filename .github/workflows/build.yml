@@ -55,7 +55,7 @@ jobs:
           cd /var/www/html/api.brianmatthewsmith.com
           mkdir temp
           rsync -av --exclude='build' --exclude='temp' --remove-source-files . temp/
-          mv /var/www/html/api.brianmatthewsmith.com/build/* /var/www/html/api.brianmatthewsmith.com/
+          mv /var/www/html/api.brianmatthewsmith.com/build/ /var/www/html/api.brianmatthewsmith.com/
           rm -rf temp
           rm -rf build
           yarn seed:prod
