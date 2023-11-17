@@ -55,7 +55,7 @@ jobs:
           cd ..
           mkdir temp
           mv /var/www/html/api.brianmatthewsmith.com/* temp/
-          mv /var/www/html/api.brianmatthewsmith.com/build/* /var/www/html/api.brianmatthewsmith.com/
-          rmdir temp
+          mv /var/www/html/api.brianmatthewsmith.com/temp/build/* /var/www/html/api.brianmatthewsmith.com/
+          rm -rf temp
           yarn seed:prod
           pm2 restart api
