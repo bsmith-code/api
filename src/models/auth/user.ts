@@ -5,10 +5,28 @@ import {
   Default,
   DataType,
   AllowNull,
-  PrimaryKey
+  PrimaryKey,
+  DefaultScope,
+  BelongsToMany
 } from 'sequelize-typescript'
 
-@Table({ tableName: 'user' })
+import { Permission } from 'models/auth/permission'
+import { UserPermissions } from 'models/auth/userPermissions'
+
+import { IPermission } from 'types/permission'
+
+@DefaultScope(() => ({
+  include: [
+    {
+      model: Permission,
+      attributes: ['id', 'name']
+    }
+  ],
+  attributes: {
+    exclude: ['createdAt', 'updatedAt', 'password', 'verified']
+  }
+}))
+@Table
 export class User extends Model {
   @PrimaryKey
   @AllowNull(false)
@@ -36,4 +54,11 @@ export class User extends Model {
   @Default(false)
   @Column(DataType.BOOLEAN)
   verified!: boolean
+
+  @BelongsToMany(() => Permission, {
+    through: { model: () => UserPermissions },
+    foreignKey: 'userId',
+    otherKey: 'permissionId'
+  })
+  permissions!: IPermission[]
 }

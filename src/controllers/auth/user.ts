@@ -8,18 +8,20 @@ import { JwtPayload, decode } from 'jsonwebtoken'
 import { getTransaction } from 'database/index'
 
 // Models
-import { User, Token } from 'models/auth'
+import { User } from 'models/auth/user'
+import { Token } from 'models/auth/token'
+import { Permission } from 'models/auth/permission'
 
 // Utils
 import { cookieOptions, signAccessToken, signRefreshToken } from 'helpers/auth'
 import { transporter, validateForm, verifyReCaptcha } from 'helpers/forms'
 
 // Types
-import { IAuthUser, IAuthUserCreate, IRequest } from 'types'
+import { IUserServer, TUserCreate, IRequest, IUserClient } from 'types'
 
-type TUserResponse = Response<Partial<IAuthUser> | { message: string }>
+type TUserResponse = Response<Partial<IUserClient> | { message: string }>
 
-export const sendVerificationEmail = async ({ id, email }: IAuthUser) => {
+export const sendVerificationEmail = async ({ id, email }: IUserClient) => {
   const mailData = {
     from: `noreply@brianmmatthewsmith.com`,
     to: email,
@@ -35,7 +37,7 @@ export const sendVerificationEmail = async ({ id, email }: IAuthUser) => {
 }
 
 export const registerUser = async (
-  req: IRequest<IAuthUserCreate>,
+  req: IRequest<TUserCreate>,
   res: TUserResponse
 ) => {
   let transaction: Transaction | undefined
@@ -65,12 +67,7 @@ export const registerUser = async (
 
       await sendVerificationEmail(user)
 
-      return res.json({
-        id: user.id,
-        email: user.email,
-        lastName: user.lastName,
-        firstName: user.firstName
-      })
+      return res.json(user)
     }
 
     return res.status(400).send({ message: 'Email unavailable.' })
@@ -84,7 +81,7 @@ export const registerUser = async (
 }
 
 export const loginUser = async (
-  req: IRequest<Pick<IAuthUser, 'email' | 'password'>>,
+  req: IRequest<Pick<IUserServer, 'email' | 'password'>>,
   res: TUserResponse
 ) => {
   try {
@@ -97,7 +94,8 @@ export const loginUser = async (
     const user = await User.findOne({
       where: {
         email
-      }
+      },
+      attributes: { include: ['password', 'verified'] }
     })
 
     const isValidPassword = compareSync(password, user?.password ?? '')
@@ -128,9 +126,9 @@ export const loginUser = async (
 
     return res.cookie('accessToken', accessToken, cookieOptions).json({
       id: user.id,
-      email: user.email,
+      firstName: user.firstName,
       lastName: user.lastName,
-      firstName: user.firstName
+      email: user.email
     })
   } catch (error) {
     return res.status(400).send({ message: (error as Error).message })
@@ -158,7 +156,7 @@ export const logoutUser = async (req: IRequest, res: Response) => {
   }
 }
 
-export const getUserSession = async (req: IRequest, res: Response) => {
+export const getUserSession = async (req: IRequest, res: TUserResponse) => {
   try {
     const {
       locals: { userId }
@@ -170,18 +168,16 @@ export const getUserSession = async (req: IRequest, res: Response) => {
       throw new Error('User not found.')
     }
 
-    return res.json({
-      id: user.id,
-      email: user.email,
-      lastName: user.lastName,
-      firstName: user.firstName
-    })
+    return res.json(user)
   } catch (error) {
     return res.status(401).send({ message: (error as Error).message })
   }
 }
 
-export const verifyUser = async (req: IRequest<boolean>, res: Response) => {
+export const verifyUser = async (
+  req: IRequest<boolean>,
+  res: TUserResponse
+) => {
   let transaction: Transaction | undefined
 
   try {
@@ -202,12 +198,56 @@ export const verifyUser = async (req: IRequest<boolean>, res: Response) => {
 
     await user.update({ verified: true })
 
-    return res.json({
-      id: user.id,
-      email: user.email,
-      lastName: user.lastName,
-      firstName: user.firstName
+    return res.json(user)
+  } catch (error) {
+    if (transaction) {
+      await transaction.rollback()
+    }
+
+    return res.status(400).send({ message: (error as Error).message })
+  }
+}
+
+export const getUsers = async (req: IRequest, res: Response) => {
+  try {
+    const users = await User.findAll()
+
+    return res.json(users)
+  } catch (error) {
+    return res.status(400).send({ message: (error as Error).message })
+  }
+}
+
+export const updateUser = async (
+  req: IRequest<IUserClient>,
+  res: TUserResponse
+) => {
+  let transaction: Transaction | undefined
+
+  try {
+    const {
+      params: { userId },
+      body
+    } = req
+
+    transaction = await getTransaction()
+
+    const currentUser = await User.findByPk(userId)
+
+    if (!currentUser) {
+      throw new Error('Invalid user id.')
+    }
+
+    const permissions = await Permission.findAll({
+      where: { id: body.permissions }
     })
+
+    await currentUser.update(body)
+    await currentUser.$set('permissions', permissions)
+
+    const updatedUser = (await User.findByPk(userId)) as User
+
+    return res.json(updatedUser)
   } catch (error) {
     if (transaction) {
       await transaction.rollback()

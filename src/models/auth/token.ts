@@ -11,9 +11,9 @@ import {
 } from 'sequelize-typescript'
 
 // Models
-import { User } from 'models/auth'
+import { User } from 'models/auth/user'
 
-@Table({ tableName: 'token' })
+@Table
 export class Token extends Model {
   @PrimaryKey
   @Default(DataType.UUIDV4)

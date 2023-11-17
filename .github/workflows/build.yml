@@ -52,4 +52,5 @@ jobs:
         script: |
           cd /var/www/html/api.brianmatthewsmith.com
           yarn
+          yarn seed:prod
           pm2 restart api

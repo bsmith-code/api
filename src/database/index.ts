@@ -1,19 +1,17 @@
-// Common
-import { Sequelize } from 'sequelize-typescript'
-
 // Configs
-import { dbConfig } from 'config/index'
+import sequelize from 'config/index'
 
 // Models
-import { User, Token } from 'models/auth'
-
-const sequelize = new Sequelize(dbConfig)
+import { User } from 'models/auth/user'
+import { Token } from 'models/auth/token'
+import { Permission } from 'models/auth/permission'
+import { UserPermissions } from 'models/auth/userPermissions'
 
 export const connect = async () => {
   try {
     await sequelize.authenticate()
 
-    sequelize.addModels([User, Token])
+    sequelize.addModels([User, Token, Permission, UserPermissions])
     await sequelize.sync({ force: false, alter: true })
 
     console.log('Database connection established.')
@@ -25,9 +23,5 @@ export const connect = async () => {
   }
 }
 
-export const close = async () => {
-  await sequelize.close()
-  console.log('Database connection closed.')
-}
-
+export const close = () => sequelize.close()
 export const getTransaction = () => sequelize.transaction()
