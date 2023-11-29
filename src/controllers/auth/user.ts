@@ -100,7 +100,6 @@ export const loginUser = async (
 
     const isValidPassword = compareSync(password, user?.password ?? '')
 
-    console.log(user, isValidPassword)
     if (!user || !isValidPassword) {
       throw new Error('Invalid email or password.')
     }
