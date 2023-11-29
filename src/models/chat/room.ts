@@ -26,8 +26,8 @@ export class Room extends Model {
 
   @BelongsToMany(() => User, {
     through: { model: () => RoomMembers },
-    foreignKey: 'userId',
-    otherKey: 'roomId'
+    foreignKey: 'roomId',
+    otherKey: 'userId'
   })
   members!: IUserServer[]
 }

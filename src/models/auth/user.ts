@@ -14,6 +14,8 @@ import { Permission } from 'models/auth/permission'
 import { UserPermissions } from 'models/auth/userPermissions'
 
 import { IPermission } from 'types/permission'
+import { Room } from 'models/chat/room'
+import { RoomMembers } from 'models/chat/roomMembers'
 
 @DefaultScope(() => ({
   include: [
@@ -61,4 +63,11 @@ export class User extends Model {
     otherKey: 'permissionId'
   })
   permissions!: IPermission[]
+
+  @BelongsToMany(() => Room, {
+    through: { model: () => RoomMembers },
+    foreignKey: 'userId',
+    otherKey: 'roomId'
+  })
+  rooms!: unknown[]
 }
