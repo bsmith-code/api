@@ -1,16 +1,16 @@
-import { User } from 'models/auth/user'
 import {
-  Model,
-  Table,
-  Column,
-  Default,
-  DataType,
   AllowNull,
+  BelongsToMany,
+  Column,
+  DataType,
+  Default,
+  Model,
   PrimaryKey,
-  BelongsToMany
+  Table
 } from 'sequelize-typescript'
+
+import { User } from 'models/auth/user'
 import { RoomMembers } from 'models/chat/roomMembers'
-import { IUserServer } from 'types'
 
 @Table
 export class Room extends Model {
@@ -29,5 +29,5 @@ export class Room extends Model {
     foreignKey: 'roomId',
     otherKey: 'userId'
   })
-  members!: IUserServer[]
+  members!: User[]
 }

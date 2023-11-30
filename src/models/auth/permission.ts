@@ -1,13 +1,13 @@
 import {
-  Model,
-  Table,
-  Column,
-  Default,
-  DataType,
   AllowNull,
-  PrimaryKey,
+  BelongsToMany,
+  Column,
+  DataType,
+  Default,
   DefaultScope,
-  BelongsToMany
+  Model,
+  PrimaryKey,
+  Table
 } from 'sequelize-typescript'
 
 import { User } from 'models/auth/user'

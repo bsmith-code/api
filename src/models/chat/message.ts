@@ -1,16 +1,16 @@
 import {
-  Model,
-  Table,
-  Column,
-  Default,
-  DataType,
   AllowNull,
+  Column,
+  DataType,
+  Default,
+  ForeignKey,
+  Model,
   PrimaryKey,
-  ForeignKey
+  Table
 } from 'sequelize-typescript'
 
-import { Room } from 'models/chat/room'
 import { User } from 'models/auth/user'
+import { Room } from 'models/chat/room'
 
 @Table
 export class Message extends Model {

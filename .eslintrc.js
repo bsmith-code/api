@@ -12,6 +12,7 @@ module.exports = {
       parserOptions: {
         project: './tsconfig.json',
       },
+      plugins: ['simple-import-sort'],
       extends: [
         'airbnb-base',
         'plugin:@typescript-eslint/recommended',
@@ -28,6 +29,31 @@ module.exports = {
         }
       },
       rules: {
+        'simple-import-sort/imports': [
+          'error',
+          {
+            groups: [
+              // Packages `react` related packages come first.
+              ['^express', '^@?\\w'],
+              // Database
+              ['^(database)(/.*|$)'],
+              // Config
+              ['^(config)(/.*|$)'],
+              // Models
+              ['^(models)(/.*|$)'],
+              // Controllers
+              ['^(controllers)(/.*|$)'],
+              // Middleware
+              ['^(middleware)(/.*|$)'],
+              // Utils
+              ['^(utils)(/.*|$)'],
+              // Constants
+              ['^(constants)(/.*|$)'],
+              // Types
+              ['^(types)(/.*|$)']
+            ]
+          }
+        ],
         'import/extensions': 'off',
         // Floating promises in useEffects
         'no-void': 'off',

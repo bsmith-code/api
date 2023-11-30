@@ -1,10 +1,12 @@
 import { Response } from 'express'
+
 import { User } from 'models/auth/user'
 import { Room } from 'models/chat/room'
 import { RoomMembers } from 'models/chat/roomMembers'
+
 import { IRequest } from 'types'
 
-export const getRoomsByUserId = async (req: IRequest, res: Response) => {
+export const getUserRooms = async (req: IRequest, res: Response) => {
   try {
     const {
       locals: { userId }
@@ -24,7 +26,9 @@ export const getRoomsByUserId = async (req: IRequest, res: Response) => {
 
     // Append array of user objects to rooms object
     const members = roomMembers.map(member => member.user)
-    const preparedRooms = rooms.map(({ id, name }) => ({ id, name, members }))
+    const preparedRooms = rooms
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .map(({ id, name }) => ({ id, name, members }))
 
     res.json(preparedRooms)
   } catch (error) {
@@ -43,7 +47,9 @@ export const createRoom = async (req: IRequest, res: Response) => {
     }
 
     const room = await Room.create({ name })
-    await room.$set('members', members)
+
+    const preparedMembers = userId ? [...members, userId] : members
+    await room.$set('members', preparedMembers)
 
     res.json(room)
   } catch (error) {

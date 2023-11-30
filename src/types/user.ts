@@ -1,3 +1,5 @@
+import { Permission } from 'models/auth/permission'
+
 import { IPermission } from 'types/permission'
 
 export interface IUserClient {
@@ -5,7 +7,7 @@ export interface IUserClient {
   firstName: string
   lastName: string
   email: string
-  permissions: IPermission[]
+  permissions: Permission[]
 }
 
 export interface IUserServer extends IUserClient {

@@ -1,22 +1,19 @@
 import {
-  Model,
-  Table,
-  Column,
-  Default,
-  DataType,
   AllowNull,
-  PrimaryKey,
+  BelongsToMany,
+  Column,
+  DataType,
+  Default,
   DefaultScope,
-  BelongsToMany
+  Model,
+  PrimaryKey,
+  Table
 } from 'sequelize-typescript'
 
 import { Permission } from 'models/auth/permission'
 import { UserPermissions } from 'models/auth/userPermissions'
-
-import { IPermission } from 'types/permission'
 import { Room } from 'models/chat/room'
 import { RoomMembers } from 'models/chat/roomMembers'
-import { IRoom } from 'types'
 
 @DefaultScope(() => ({
   include: [
@@ -63,12 +60,12 @@ export class User extends Model {
     foreignKey: 'userId',
     otherKey: 'permissionId'
   })
-  permissions!: IPermission[]
+  permissions!: Permission[]
 
   @BelongsToMany(() => Room, {
     through: { model: () => RoomMembers },
     foreignKey: 'userId',
     otherKey: 'roomId'
   })
-  rooms!: IRoom[]
+  rooms!: Room[]
 }
