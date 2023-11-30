@@ -26,4 +26,6 @@ export class UserPermissions extends Model {
 
   @BelongsTo(() => Permission)
   permission?: Permission
+
+  static primaryKeyAttributes = ['userId', 'permissionId'] as const
 }

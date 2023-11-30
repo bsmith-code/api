@@ -16,6 +16,7 @@ import { UserPermissions } from 'models/auth/userPermissions'
 import { IPermission } from 'types/permission'
 import { Room } from 'models/chat/room'
 import { RoomMembers } from 'models/chat/roomMembers'
+import { IRoom } from 'types'
 
 @DefaultScope(() => ({
   include: [
@@ -69,5 +70,5 @@ export class User extends Model {
     foreignKey: 'userId',
     otherKey: 'roomId'
   })
-  rooms!: unknown[]
+  rooms!: IRoom[]
 }

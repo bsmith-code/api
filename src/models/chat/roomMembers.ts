@@ -9,11 +9,6 @@ import {
 import { Room } from 'models/chat/room'
 import { User } from 'models/auth/user'
 
-@DefaultScope(() => ({
-  attributes: {
-    exclude: ['createdAt', 'updatedAt']
-  }
-}))
 @Table
 export class RoomMembers extends Model {
   @ForeignKey(() => User)
@@ -27,4 +22,6 @@ export class RoomMembers extends Model {
 
   @BelongsTo(() => Room)
   room?: Room
+
+  static primaryKeyAttributes = ['userId', 'roomId'] as const
 }
