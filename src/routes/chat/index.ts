@@ -2,11 +2,9 @@ import express from 'express'
 
 import { createRoom, getUserRooms } from 'controllers/chat'
 
-import { validateAndRefreshToken } from 'middleware/auth'
-
 const chatRouter = express.Router()
 
-chatRouter.get('/rooms', validateAndRefreshToken, getUserRooms)
-chatRouter.post('/rooms', validateAndRefreshToken, createRoom)
+chatRouter.get('/rooms', getUserRooms)
+chatRouter.post('/rooms', createRoom)
 
 export default chatRouter

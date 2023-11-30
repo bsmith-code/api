@@ -1,22 +1,22 @@
 // Common
-import { body } from 'express-validator'
 import { NextFunction, Response } from 'express'
-import { JwtPayload, decode, verify } from 'jsonwebtoken'
+import { body } from 'express-validator'
 import dayjs from 'dayjs'
+import { decode, JwtPayload, verify } from 'jsonwebtoken'
 
 // Models
 import { Token } from 'models/auth/token'
 
 // Utils
-import { cookieOptions, signAccessToken } from 'helpers/auth'
+import { cookieOptions, signAccessToken } from 'utils/auth'
 
 // Constants
 import {
-  FORM_EMAIL,
   FORM_CAPTCHA,
-  FORM_PASSWORD,
+  FORM_EMAIL,
+  FORM_FIRST_NAME,
   FORM_LAST_NAME,
-  FORM_FIRST_NAME
+  FORM_PASSWORD
 } from 'constants/forms'
 
 // Types
@@ -87,6 +87,7 @@ export const validateAndRefreshToken = async (
     }
   } catch (error) {
     // TODO: Logout
+
     const { message } = error as Error
     return res.status(401).send({ message })
   }

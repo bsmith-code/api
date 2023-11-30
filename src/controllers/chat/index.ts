@@ -46,10 +46,10 @@ export const createRoom = async (req: IRequest, res: Response) => {
       members: string[]
     }
 
-    const room = await Room.create({ name })
-
     const preparedMembers = userId ? [...members, userId] : members
-    await room.$set('members', preparedMembers)
+
+    const room = await Room.create({ name, userId: preparedMembers })
+    await room.$add('members', preparedMembers)
 
     res.json(room)
   } catch (error) {

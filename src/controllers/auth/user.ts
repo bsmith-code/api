@@ -1,23 +1,18 @@
-// Common
-import { compareSync, hashSync } from 'bcryptjs'
-import { Transaction } from 'sequelize'
 import { Response } from 'express'
-import { JwtPayload, decode } from 'jsonwebtoken'
+import { compareSync, hashSync } from 'bcryptjs'
+import { decode, JwtPayload } from 'jsonwebtoken'
+import { Transaction } from 'sequelize'
 
-// DB
 import { getTransaction } from 'database/index'
 
-// Models
-import { User } from 'models/auth/user'
-import { Token } from 'models/auth/token'
 import { Permission } from 'models/auth/permission'
+import { Token } from 'models/auth/token'
+import { User } from 'models/auth/user'
 
-// Utils
-import { cookieOptions, signAccessToken, signRefreshToken } from 'helpers/auth'
-import { transporter, validateForm, verifyReCaptcha } from 'helpers/forms'
+import { cookieOptions, signAccessToken, signRefreshToken } from 'utils/auth'
+import { transporter, validateForm, verifyReCaptcha } from 'utils/forms'
 
-// Types
-import { IUserServer, TUserCreate, IRequest, IUserClient } from 'types'
+import { IRequest, IUserClient, IUserServer, TUserCreate } from 'types'
 
 type TUserResponse = Response<Partial<IUserClient> | { message: string }>
 
