@@ -1,18 +1,15 @@
-// Common
 import express from 'express'
 
-// Controllers
 import {
   getUsers,
+  getUserSession,
   loginUser,
-  verifyUser,
   logoutUser,
-  updateUser,
   registerUser,
-  getUserSession
+  updateUser,
+  verifyUser
 } from 'controllers/auth/user'
 
-// Middleware
 import { validateLoginUser, validateRegisterUser } from 'middleware/auth'
 
 export const userPublicRouter = express.Router()

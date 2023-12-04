@@ -1,5 +1,5 @@
-import { JwtPayload as JsonWebToken } from 'jsonwebtoken'
 import { Response as ExpressResponse } from 'express'
+import { JwtPayload as JsonWebToken } from 'jsonwebtoken'
 
 declare module 'jsonwebtoken' {
   interface JwtPayload {

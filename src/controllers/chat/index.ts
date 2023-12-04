@@ -1,6 +1,8 @@
 import { Response } from 'express'
+import { io } from 'index'
 
 import { User } from 'models/auth/user'
+import { Message } from 'models/chat/message'
 import { Room } from 'models/chat/room'
 import { RoomMembers } from 'models/chat/roomMembers'
 
@@ -32,7 +34,7 @@ export const getUserRooms = async (req: IRequest, res: Response) => {
 
     res.json(preparedRooms)
   } catch (error) {
-    return res.status(400).send({ message: (error as Error).message })
+    res.status(400).send({ message: (error as Error).message })
   }
 }
 
@@ -53,6 +55,51 @@ export const createRoom = async (req: IRequest, res: Response) => {
 
     res.json(room)
   } catch (error) {
-    return res.status(400).send({ message: (error as Error).message })
+    res.status(400).send({ message: (error as Error).message })
+  }
+}
+
+export const getRoomMessages = async (req: IRequest, res: Response) => {
+  try {
+    const {
+      locals: { userId }
+    } = res
+    const {
+      params: { roomId }
+    } = req
+
+    const messages = await Message.findAll({
+      where: { roomId },
+      order: [['createdAt', 'DESC']]
+    })
+
+    res.json(messages)
+  } catch (error) {
+    res.status(400).send({ message: (error as Error).message })
+  }
+}
+
+export const createMessage = async (req: IRequest<Message>, res: Response) => {
+  try {
+    const {
+      locals: { userId }
+    } = res
+    const {
+      body: { message, roomId }
+    } = req
+
+    if (!roomId) {
+      throw new Error('RoomId is required.')
+    }
+    if (!message) {
+      throw new Error('Message is required.')
+    }
+
+    const newMessage = await Message.create({ message, roomId, userId })
+    io.emit('message', newMessage)
+
+    res.json(newMessage)
+  } catch (error) {
+    res.status(400).send({ message: (error as Error).message })
   }
 }
