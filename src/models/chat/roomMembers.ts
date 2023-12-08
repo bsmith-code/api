@@ -1,13 +1,13 @@
 import {
-  Model,
-  Table,
   BelongsTo,
+  DefaultScope,
   ForeignKey,
-  DefaultScope
+  Model,
+  Table
 } from 'sequelize-typescript'
 
-import { Room } from 'models/chat/room'
 import { User } from 'models/auth/user'
+import { Room } from 'models/chat/room'
 
 @Table
 export class RoomMembers extends Model {

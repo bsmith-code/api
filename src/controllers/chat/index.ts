@@ -15,22 +15,26 @@ export const getUserRooms = async (req: IRequest, res: Response) => {
     } = res
 
     // Find all rooms associated with current user
-    const user = await User.findByPk(userId, { include: [Room] })
-    const rooms = user?.rooms ?? []
+    const self = await User.findByPk(userId, { include: [Room] })
+    const rooms = self?.rooms ?? []
 
     // Find all members associated with current user rooms
     const roomMembers = await RoomMembers.findAll({
       where: { roomId: rooms.map(({ id }) => id) },
-      include: [User]
+      include: [User, Room]
     })
 
     // Find most recent message associated with current room
 
-    // Append array of user objects to rooms object
-    const members = roomMembers.map(member => member.user)
     const preparedRooms = rooms
       .sort((a, b) => b.createdAt - a.createdAt)
-      .map(({ id, name }) => ({ id, name, members }))
+      .map(({ id, name }) => ({
+        id,
+        name,
+        members: roomMembers
+          .filter(({ room }) => room?.id === id)
+          .map(({ user }) => user)
+      }))
 
     res.json(preparedRooms)
   } catch (error) {
@@ -70,7 +74,7 @@ export const getRoomMessages = async (req: IRequest, res: Response) => {
 
     const messages = await Message.findAll({
       where: { roomId },
-      order: [['createdAt', 'DESC']]
+      order: [['createdAt', 'ASC']]
     })
 
     res.json(messages)
