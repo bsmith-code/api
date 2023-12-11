@@ -47,11 +47,14 @@ export const createRoom = async (req: IRequest<IRoomCreate>, res: Response) => {
     const {
       locals: { userId }
     } = res
-    const { name, members } = req.body
+    const { name, description, members } = req.body
 
     const preparedMembers = userId ? [...members, userId] : members
 
-    const room = await Room.create({ name, userId: preparedMembers })
+    const room = await Room.create({
+      name,
+      description
+    })
     await room.$add('members', preparedMembers)
 
     const createdRoom = await Room.findByPk(room.id, { include: [User] })
@@ -68,7 +71,7 @@ export const updateRoom = async (req: IRequest<IRoomUpdate>, res: Response) => {
     const {
       locals: { userId }
     } = res
-    const { id, name, members } = req.body
+    const { id, name, description, members } = req.body
 
     const roomMember = await RoomMembers.findOne({
       where: { userId, roomId: id }
@@ -84,10 +87,10 @@ export const updateRoom = async (req: IRequest<IRoomUpdate>, res: Response) => {
       throw new Error('Invalid room id.')
     }
 
-    await room.update({ name })
+    await room.update({ name, description })
     await room.$set('members', members)
 
-    const updatedRoom = await Room.findByPk(id)
+    const updatedRoom = await Room.findByPk(id, { include: [User] })
 
     io.emit('updateRoom', updatedRoom)
     res.json(updatedRoom)

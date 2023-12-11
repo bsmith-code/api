@@ -1,5 +1,6 @@
 export interface IRoomCreate {
   name: string
+  description: string
   members: string[]
 }
 
