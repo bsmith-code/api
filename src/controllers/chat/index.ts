@@ -6,7 +6,9 @@ import { Message } from 'models/chat/message'
 import { Room } from 'models/chat/room'
 import { RoomMembers } from 'models/chat/roomMembers'
 
-import { IRequest, IRoomCreate, IRoomUpdate } from 'types'
+import { prepareMembers } from 'utils/chat'
+
+import { IRequest, IRoomRequest } from 'types'
 
 export const getUserRooms = async (req: IRequest, res: Response) => {
   try {
@@ -42,14 +44,25 @@ export const getUserRooms = async (req: IRequest, res: Response) => {
   }
 }
 
-export const createRoom = async (req: IRequest<IRoomCreate>, res: Response) => {
+export const createRoom = async (
+  req: IRequest<IRoomRequest>,
+  res: Response
+) => {
   try {
     const {
       locals: { userId }
     } = res
     const { name, description, members } = req.body
 
-    const preparedMembers = userId ? [...members, userId] : members
+    if (!userId) {
+      throw new Error('Invalid user.')
+    }
+
+    if (!members.length) {
+      throw new Error('Must have at least 1 member.')
+    }
+
+    const preparedMembers = prepareMembers(members, userId)
 
     const room = await Room.create({
       name,
@@ -66,12 +79,23 @@ export const createRoom = async (req: IRequest<IRoomCreate>, res: Response) => {
   }
 }
 
-export const updateRoom = async (req: IRequest<IRoomUpdate>, res: Response) => {
+export const updateRoom = async (
+  req: IRequest<IRoomRequest>,
+  res: Response
+) => {
   try {
     const {
       locals: { userId }
     } = res
     const { id, name, description, members } = req.body
+
+    if (!userId) {
+      throw new Error('Invalid user.')
+    }
+
+    if (!members.length) {
+      throw new Error('Must have at least 1 member.')
+    }
 
     const roomMember = await RoomMembers.findOne({
       where: { userId, roomId: id }
@@ -87,8 +111,10 @@ export const updateRoom = async (req: IRequest<IRoomUpdate>, res: Response) => {
       throw new Error('Invalid room id.')
     }
 
+    const preparedMembers = prepareMembers(members, userId)
+
     await room.update({ name, description })
-    await room.$set('members', members)
+    await room.$set('members', preparedMembers)
 
     const updatedRoom = await Room.findByPk(id, { include: [User] })
 
