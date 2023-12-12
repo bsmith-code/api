@@ -16,29 +16,40 @@ export const getUserRooms = async (req: IRequest, res: Response) => {
       locals: { userId }
     } = res
 
-    // Find all rooms associated with current user
     const self = await User.findByPk(userId, { include: [Room] })
     const rooms = self?.rooms ?? []
 
-    // Find all members associated with current user rooms
-    const roomMembers = await RoomMembers.findAll({
-      where: { roomId: rooms.map(({ id }) => id) },
-      include: [User, Room]
-    })
+    const preparedRooms = await Promise.all(
+      rooms
+        .sort((a, b) => b.createdAt - a.createdAt)
+        .map(async ({ id, name, description }) => {
+          const message =
+            (await Message.findOne({
+              where: { roomId: id },
+              order: [['createdAt', 'DESC']]
+            })) ?? {}
 
-    // Find most recent message associated with current room
+          const members = await RoomMembers.findAll({
+            where: { roomId: id },
+            include: [User]
+          })
 
-    const preparedRooms = rooms
-      .sort((a, b) => b.createdAt - a.createdAt)
-      .map(({ id, name, description }) => ({
-        id,
-        name,
-        description,
-        message: {},
-        members: roomMembers
-          .filter(({ room }) => room?.id === id)
-          .map(({ user }) => user)
-      }))
+          const preparedMembers = members.map(({ user }) => ({
+            id: user?.id,
+            firstName: user?.firstName,
+            lastName: user?.lastName,
+            email: user?.email
+          }))
+
+          return {
+            id,
+            name,
+            message,
+            description,
+            members: preparedMembers
+          }
+        })
+    )
 
     res.json(preparedRooms)
   } catch (error) {
