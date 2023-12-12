@@ -30,9 +30,11 @@ export const getUserRooms = async (req: IRequest, res: Response) => {
 
     const preparedRooms = rooms
       .sort((a, b) => b.createdAt - a.createdAt)
-      .map(({ id, name }) => ({
+      .map(({ id, name, description }) => ({
         id,
         name,
+        description,
+        message: {},
         members: roomMembers
           .filter(({ room }) => room?.id === id)
           .map(({ user }) => user)
@@ -58,11 +60,11 @@ export const createRoom = async (
       throw new Error('Invalid user.')
     }
 
-    if (!members.length) {
+    const preparedMembers = prepareMembers(members, userId)
+
+    if (preparedMembers.length < 2) {
       throw new Error('Must have at least 1 member.')
     }
-
-    const preparedMembers = prepareMembers(members, userId)
 
     const room = await Room.create({
       name,
@@ -93,7 +95,9 @@ export const updateRoom = async (
       throw new Error('Invalid user.')
     }
 
-    if (!members.length) {
+    const preparedMembers = prepareMembers(members, userId)
+
+    if (preparedMembers.length < 2) {
       throw new Error('Must have at least 1 member.')
     }
 
@@ -110,8 +114,6 @@ export const updateRoom = async (
     if (!room) {
       throw new Error('Invalid room id.')
     }
-
-    const preparedMembers = prepareMembers(members, userId)
 
     await room.update({ name, description })
     await room.$set('members', preparedMembers)
