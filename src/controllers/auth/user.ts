@@ -90,6 +90,7 @@ export const loginUser = async (
       where: {
         email
       },
+      include: [Permission],
       attributes: { include: ['password', 'verified'] }
     })
 
@@ -121,9 +122,10 @@ export const loginUser = async (
 
     return res.cookie('accessToken', accessToken, cookieOptions).json({
       id: user.id,
-      firstName: user.firstName,
+      email: user.email,
       lastName: user.lastName,
-      email: user.email
+      firstName: user.firstName,
+      permissions: user.permissions
     })
   } catch (error) {
     return res.status(400).send({ message: (error as Error).message })
@@ -157,7 +159,7 @@ export const getUserSession = async (req: IRequest, res: TUserResponse) => {
       locals: { userId }
     } = res
 
-    const user = await User.findByPk(userId)
+    const user = await User.findByPk(userId, { include: [Permission] })
 
     if (!user) {
       throw new Error('User not found.')

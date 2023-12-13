@@ -1,5 +1,8 @@
 import { Response } from 'express'
 import { io } from 'index'
+import { Transaction } from 'sequelize'
+
+import { getTransaction } from 'database/index'
 
 import { User } from 'models/auth/user'
 import { Message } from 'models/chat/message'
@@ -61,7 +64,11 @@ export const createRoom = async (
   req: IRequest<IRoomRequest>,
   res: Response
 ) => {
+  let transaction: Transaction | undefined
+
   try {
+    transaction = await getTransaction()
+
     const {
       locals: { userId }
     } = res
@@ -83,11 +90,26 @@ export const createRoom = async (
     })
     await room.$add('members', preparedMembers)
 
-    const createdRoom = await Room.findByPk(room.id, { include: [User] })
+    const createdRoom = await Room.findByPk(room.id, {
+      include: [User]
+    })
 
-    io.emit('createRoom', createdRoom)
-    res.json(createdRoom)
+    if (!createdRoom) {
+      throw new Error('Invalid room.')
+    }
+
+    const preparedRoom = {
+      ...createdRoom.toJSON<Room>(),
+      message: {}
+    }
+
+    io.emit('createRoom', preparedRoom)
+    res.json(preparedRoom)
   } catch (error) {
+    if (transaction) {
+      await transaction.rollback()
+    }
+
     res.status(400).send({ message: (error as Error).message })
   }
 }
@@ -96,7 +118,11 @@ export const updateRoom = async (
   req: IRequest<IRoomRequest>,
   res: Response
 ) => {
+  let transaction: Transaction | undefined
+
   try {
+    transaction = await getTransaction()
+
     const {
       locals: { userId }
     } = res
@@ -131,9 +157,27 @@ export const updateRoom = async (
 
     const updatedRoom = await Room.findByPk(id, { include: [User] })
 
-    io.emit('updateRoom', updatedRoom)
-    res.json(updatedRoom)
+    if (!updatedRoom) {
+      throw new Error('Invalid room.')
+    }
+
+    const message = await Message.findOne({
+      where: { roomId: updatedRoom.id },
+      order: [['createdAt', 'DESC']]
+    })
+
+    const preparedRoom = {
+      ...updatedRoom.toJSON<Room>(),
+      message: message ?? {}
+    }
+
+    io.emit('updateRoom', preparedRoom)
+    res.json(preparedRoom)
   } catch (error) {
+    if (transaction) {
+      await transaction.rollback()
+    }
+
     res.status(400).send({ message: (error as Error).message })
   }
 }
@@ -146,6 +190,14 @@ export const getRoomMessages = async (req: IRequest, res: Response) => {
     const {
       params: { roomId }
     } = req
+
+    const roomMember = await RoomMembers.findOne({
+      where: { userId, roomId }
+    })
+
+    if (!roomMember) {
+      throw new Error('Invalid room.')
+    }
 
     const messages = await Message.findAll({
       where: { roomId },
@@ -170,6 +222,15 @@ export const createMessage = async (req: IRequest<Message>, res: Response) => {
     if (!roomId) {
       throw new Error('RoomId is required.')
     }
+
+    const roomMember = await RoomMembers.findOne({
+      where: { userId, roomId }
+    })
+
+    if (!roomMember) {
+      throw new Error('Invalid room.')
+    }
+
     if (!message) {
       throw new Error('Message is required.')
     }

@@ -16,12 +16,6 @@ import { Room } from 'models/chat/room'
 import { RoomMembers } from 'models/chat/roomMembers'
 
 @DefaultScope(() => ({
-  include: [
-    {
-      model: Permission,
-      attributes: ['id', 'name']
-    }
-  ],
   attributes: {
     exclude: ['createdAt', 'updatedAt', 'password', 'verified']
   }
