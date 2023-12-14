@@ -12,6 +12,8 @@ import { User } from 'models/user'
 import { cookieOptions, signAccessToken, signRefreshToken } from 'utils/auth'
 import { transporter, validateForm, verifyReCaptcha } from 'utils/forms'
 
+import { PERMISSION_SUPER_ADMIN } from 'constants/permissions'
+
 import { IRequest, IUserClient, IUserServer, TUserCreate } from 'types'
 
 type TUserResponse = Response<Partial<IUserClient> | { message: string }>
@@ -257,7 +259,16 @@ export const verifyUser = async (
 
 export const getUsers = async (req: IRequest, res: Response) => {
   try {
-    const users = await User.findAll()
+    const {
+      locals: { userId }
+    } = res
+
+    const user = await User.findByPk(userId, { include: [Permission] })
+    const isAdmin = user?.permissions.find(
+      ({ name }) => name === PERMISSION_SUPER_ADMIN
+    )
+
+    const users = await User.findAll({ include: isAdmin ? [Permission] : [] })
 
     return res.json(users)
   } catch (error) {
