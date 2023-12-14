@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { io } from 'index'
+import { io } from 'server'
 
 import { Message } from 'models/message'
 import { Room } from 'models/room'

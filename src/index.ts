@@ -1,27 +1,13 @@
-import express from 'express'
 import bodyParser from 'body-parser'
 import compression from 'compression'
 import cookieParser from 'cookie-parser'
 import cors, { CorsOptions } from 'cors'
 import helmet from 'helmet'
-import http from 'node:http'
-import { Server } from 'socket.io'
+import { app, io, server } from 'server'
 
 import { connect } from 'database/index'
 
 import routes from 'routes/index'
-
-const app = express()
-const server = http.createServer(app)
-export const io = new Server(server, {
-  cors: {
-    origin: (origin, callback) => {
-      // Check if the origin is allowed, adjust accordingly
-      callback(null, true)
-    },
-    methods: ['GET', 'POST']
-  }
-})
 
 const corsOptions: CorsOptions = {
   origin: true,
