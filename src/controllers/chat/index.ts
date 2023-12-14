@@ -1,8 +1,5 @@
 import { Response } from 'express'
 import { io } from 'index'
-import { Transaction } from 'sequelize'
-
-import { getTransaction } from 'database/index'
 
 import { User } from 'models/auth/user'
 import { Message } from 'models/chat/message'
@@ -64,11 +61,7 @@ export const createRoom = async (
   req: IRequest<IRoomRequest>,
   res: Response
 ) => {
-  let transaction: Transaction | undefined
-
   try {
-    transaction = await getTransaction()
-
     const {
       locals: { userId }
     } = res
@@ -106,10 +99,6 @@ export const createRoom = async (
     io.emit('createRoom', preparedRoom)
     res.json(preparedRoom)
   } catch (error) {
-    if (transaction) {
-      await transaction.rollback()
-    }
-
     res.status(400).send({ message: (error as Error).message })
   }
 }
@@ -118,11 +107,7 @@ export const updateRoom = async (
   req: IRequest<IRoomRequest>,
   res: Response
 ) => {
-  let transaction: Transaction | undefined
-
   try {
-    transaction = await getTransaction()
-
     const {
       locals: { userId }
     } = res
@@ -174,10 +159,6 @@ export const updateRoom = async (
     io.emit('updateRoom', preparedRoom)
     res.json(preparedRoom)
   } catch (error) {
-    if (transaction) {
-      await transaction.rollback()
-    }
-
     res.status(400).send({ message: (error as Error).message })
   }
 }
@@ -201,7 +182,8 @@ export const getRoomMessages = async (req: IRequest, res: Response) => {
 
     const messages = await Message.findAll({
       where: { roomId },
-      order: [['createdAt', 'ASC']]
+      order: [['createdAt', 'ASC']],
+      include: [User]
     })
 
     res.json(messages)
@@ -236,9 +218,12 @@ export const createMessage = async (req: IRequest<Message>, res: Response) => {
     }
 
     const newMessage = await Message.create({ message, roomId, userId })
-    io.emit('createMessage', newMessage)
+    const createdMessage = await Message.findByPk(newMessage.id, {
+      include: [User]
+    })
 
-    res.json(newMessage)
+    io.emit('createMessage', createdMessage)
+    res.json(createdMessage)
   } catch (error) {
     res.status(400).send({ message: (error as Error).message })
   }

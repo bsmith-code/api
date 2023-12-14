@@ -31,6 +31,39 @@ export const sendVerificationEmail = async ({ id, email }: IUserClient) => {
   await transporter.sendMail(mailData)
 }
 
+export const sendErrorEmail = async (
+  req: IRequest<{
+    host: string
+    name: string
+    message: string
+    stack?: string
+  }>,
+  res: Response
+) => {
+  try {
+    const {
+      body: { host, name, message, stack = '' }
+    } = req
+
+    const preparedHost = host.split('.')[0]
+    const mailData = {
+      from: 'noreply@brianmatthewsmith.com',
+      to: 'brian@brianmatthewsmith.com',
+      subject: `An error occurred on ${preparedHost}`,
+      html: `
+        Name: ${name}</br>
+        Message: ${message}</br>
+        Stack: ${stack}</br>
+      `
+    }
+
+    await transporter.sendMail(mailData)
+    return res.status(200).send('OK')
+  } catch (error) {
+    return res.status(400).send({ message: (error as Error).message })
+  }
+}
+
 export const registerUser = async (
   req: IRequest<TUserCreate>,
   res: TUserResponse

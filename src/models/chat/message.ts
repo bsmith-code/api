@@ -1,5 +1,6 @@
 import {
   AllowNull,
+  BelongsTo,
   Column,
   DataType,
   Default,
@@ -29,6 +30,9 @@ export class Message extends Model {
   roomId!: string
 
   @AllowNull(false)
-  @Column(DataType.STRING)
+  @Column(DataType.TEXT)
   message!: string
+
+  @BelongsTo(() => User, 'userId')
+  user!: User
 }

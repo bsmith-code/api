@@ -1,12 +1,7 @@
-// Common
 import express from 'express'
-
-// Routes
-
 import { permissionRouter } from 'routes/auth/permission'
-import { userPublicRouter, userProtectedRouter } from 'routes/auth/user'
+import { userProtectedRouter, userPublicRouter } from 'routes/auth/user'
 
-// Middleware
 import { validateAndRefreshToken } from 'middleware/auth'
 
 const authRouter = express.Router()

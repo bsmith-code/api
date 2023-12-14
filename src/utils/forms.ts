@@ -1,9 +1,7 @@
-// Common
-import fetch from 'node-fetch'
 import { validationResult } from 'express-validator'
+import fetch from 'node-fetch'
 import nodemailer from 'nodemailer'
 
-// Types
 import { IRequest } from 'types'
 
 const {

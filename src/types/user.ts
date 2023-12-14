@@ -1,7 +1,5 @@
 import { Permission } from 'models/auth/permission'
 
-import { IPermission } from 'types/permission'
-
 export interface IUserClient {
   id: string
   firstName: string
