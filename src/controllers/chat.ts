@@ -81,7 +81,7 @@ export const createRoom = async (
       name,
       description
     })
-    await room.$add('members', preparedMembers)
+    await room.$set('members', preparedMembers)
 
     const createdRoom = await Room.findByPk(room.id, {
       include: [User]
