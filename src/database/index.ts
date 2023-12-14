@@ -1,12 +1,12 @@
 import sequelize from 'config/index'
 
-import { Permission } from 'models/auth/permission'
-import { Token } from 'models/auth/token'
-import { User } from 'models/auth/user'
-import { UserPermissions } from 'models/auth/userPermissions'
-import { Message } from 'models/chat/message'
-import { Room } from 'models/chat/room'
-import { RoomMembers } from 'models/chat/roomMembers'
+import { Permission } from 'models/permission'
+import { Token } from 'models/token'
+import { User } from 'models/user'
+import { UserPermissions } from 'models/userPermissions'
+import { Message } from 'models/message'
+import { Room } from 'models/room'
+import { RoomMembers } from 'models/roomMembers'
 
 export const connect = async () => {
   try {

@@ -10,10 +10,10 @@ import {
   Table
 } from 'sequelize-typescript'
 
-import { Permission } from 'models/auth/permission'
-import { UserPermissions } from 'models/auth/userPermissions'
-import { Room } from 'models/chat/room'
-import { RoomMembers } from 'models/chat/roomMembers'
+import { Permission } from 'models/permission'
+import { Room } from 'models/room'
+import { RoomMembers } from 'models/roomMembers'
+import { UserPermissions } from 'models/userPermissions'
 
 @DefaultScope(() => ({
   attributes: {

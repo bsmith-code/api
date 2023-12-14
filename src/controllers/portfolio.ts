@@ -1,11 +1,8 @@
-// Common
 import { Response } from 'express'
 import SMTPTransport from 'nodemailer/lib/smtp-transport'
 
-// Utils
 import { transporter, validateForm, verifyReCaptcha } from 'utils/forms'
 
-// Types
 import { IPortfolioEmail, IRequest } from 'types'
 
 export const postEmail = async (

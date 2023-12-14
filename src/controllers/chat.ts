@@ -1,10 +1,10 @@
 import { Response } from 'express'
 import { io } from 'index'
 
-import { User } from 'models/auth/user'
-import { Message } from 'models/chat/message'
-import { Room } from 'models/chat/room'
-import { RoomMembers } from 'models/chat/roomMembers'
+import { Message } from 'models/message'
+import { Room } from 'models/room'
+import { RoomMembers } from 'models/roomMembers'
+import { User } from 'models/user'
 
 import { prepareMembers } from 'utils/chat'
 

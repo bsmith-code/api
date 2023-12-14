@@ -9,7 +9,7 @@ import {
   sendErrorEmail,
   updateUser,
   verifyUser
-} from 'controllers/auth/user'
+} from 'controllers/user'
 
 import { validateLoginUser, validateRegisterUser } from 'middleware/auth'
 

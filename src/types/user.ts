@@ -1,4 +1,4 @@
-import { Permission } from 'models/auth/permission'
+import { Permission } from 'models/permission'
 
 export interface IUserClient {
   id: string

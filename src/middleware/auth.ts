@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 import { decode, JwtPayload, verify } from 'jsonwebtoken'
 
 // Models
-import { Token } from 'models/auth/token'
+import { Token } from 'models/token'
 
 // Utils
 import { cookieOptions, signAccessToken } from 'utils/auth'

@@ -1,4 +1,4 @@
-import { User } from 'models/auth/user'
+import { User } from 'models/user'
 
 export interface IRoomRequest {
   id?: string

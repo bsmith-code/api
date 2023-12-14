@@ -4,22 +4,16 @@ import {
   Column,
   DataType,
   Default,
-  DefaultScope,
   Model,
   PrimaryKey,
   Table
 } from 'sequelize-typescript'
 
-import { User } from 'models/auth/user'
-import { UserPermissions } from 'models/auth/userPermissions'
+import { RoomMembers } from 'models/roomMembers'
+import { User } from 'models/user'
 
-@DefaultScope(() => ({
-  attributes: {
-    exclude: ['createdAt', 'updatedAt']
-  }
-}))
 @Table
-export class Permission extends Model {
+export class Room extends Model {
   @PrimaryKey
   @AllowNull(false)
   @Default(DataType.UUIDV4)
@@ -30,10 +24,14 @@ export class Permission extends Model {
   @Column(DataType.STRING)
   name!: string
 
+  @AllowNull(false)
+  @Column(DataType.STRING)
+  description!: string
+
   @BelongsToMany(() => User, {
-    through: { model: () => UserPermissions },
-    foreignKey: 'permissionId',
+    through: { model: () => RoomMembers },
+    foreignKey: 'roomId',
     otherKey: 'userId'
   })
-  user?: User[]
+  members!: User[]
 }

@@ -1,14 +1,12 @@
-// Common
 import { body } from 'express-validator'
 
-// Constants
 import {
-  FORM_EMAIL,
-  FORM_SUBJECT,
   FORM_CAPTCHA,
-  FORM_MESSAGE,
+  FORM_EMAIL,
+  FORM_FIRST_NAME,
   FORM_LAST_NAME,
-  FORM_FIRST_NAME
+  FORM_MESSAGE,
+  FORM_SUBJECT
 } from 'constants/forms'
 
 export const validateForm = () => {

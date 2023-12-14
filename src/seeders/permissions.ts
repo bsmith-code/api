@@ -1,8 +1,8 @@
 import sequelize from 'config/index'
 
-import { Permission } from 'models/auth/permission'
-import { User } from 'models/auth/user'
-import { UserPermissions } from 'models/auth/userPermissions'
+import { Permission } from 'models/permission'
+import { User } from 'models/user'
+import { UserPermissions } from 'models/userPermissions'
 
 import { PERMISSION_SUPER_ADMIN, PERMISSIONS_ALL } from 'constants/permissions'
 

@@ -1,12 +1,13 @@
-import { User } from 'models/auth/user'
-import { Permission } from 'models/auth/permission'
 import {
-  Model,
-  Table,
   BelongsTo,
+  DefaultScope,
   ForeignKey,
-  DefaultScope
+  Model,
+  Table
 } from 'sequelize-typescript'
+
+import { Permission } from 'models/permission'
+import { User } from 'models/user'
 
 @DefaultScope(() => ({
   attributes: {

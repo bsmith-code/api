@@ -5,10 +5,11 @@ import cookieParser from 'cookie-parser'
 import cors, { CorsOptions } from 'cors'
 import helmet from 'helmet'
 import http from 'node:http'
-import routes from 'routes/index'
 import { Server } from 'socket.io'
 
 import { connect } from 'database/index'
+
+import routes from 'routes/index'
 
 const app = express()
 const server = http.createServer(app)

@@ -1,17 +1,15 @@
-// Common
 import {
-  Model,
-  Table,
-  Column,
-  Default,
-  DataType,
   AllowNull,
+  Column,
+  DataType,
+  Default,
+  ForeignKey,
+  Model,
   PrimaryKey,
-  ForeignKey
+  Table
 } from 'sequelize-typescript'
 
-// Models
-import { User } from 'models/auth/user'
+import { User } from 'models/user'
 
 @Table
 export class Token extends Model {

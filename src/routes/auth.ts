@@ -1,6 +1,7 @@
 import express from 'express'
-import { permissionRouter } from 'routes/auth/permission'
-import { userProtectedRouter, userPublicRouter } from 'routes/auth/user'
+
+import { permissionRouter } from 'routes/permission'
+import { userProtectedRouter, userPublicRouter } from 'routes/user'
 
 import { validateAndRefreshToken } from 'middleware/auth'
 

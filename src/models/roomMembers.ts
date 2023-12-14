@@ -1,7 +1,7 @@
 import { BelongsTo, ForeignKey, Model, Table } from 'sequelize-typescript'
 
-import { User } from 'models/auth/user'
-import { Room } from 'models/chat/room'
+import { Room } from 'models/room'
+import { User } from 'models/user'
 
 @Table
 export class RoomMembers extends Model {

@@ -5,9 +5,9 @@ import { Transaction } from 'sequelize'
 
 import { getTransaction } from 'database/index'
 
-import { Permission } from 'models/auth/permission'
-import { Token } from 'models/auth/token'
-import { User } from 'models/auth/user'
+import { Permission } from 'models/permission'
+import { Token } from 'models/token'
+import { User } from 'models/user'
 
 import { cookieOptions, signAccessToken, signRefreshToken } from 'utils/auth'
 import { transporter, validateForm, verifyReCaptcha } from 'utils/forms'

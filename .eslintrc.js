@@ -43,6 +43,8 @@ module.exports = {
               ['^(models)(/.*|$)'],
               // Controllers
               ['^(controllers)(/.*|$)'],
+              // Routes
+              ['^(routes)(/.*|$)'],
               // Middleware
               ['^(middleware)(/.*|$)'],
               // Utils
