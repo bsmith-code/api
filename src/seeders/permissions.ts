@@ -1,8 +1,10 @@
-import { PERMISSIONS_ALL, PERMISSION_SUPER_ADMIN } from 'constants/permissions'
-import { Permission } from 'models/auth/permission'
-import { UserPermissions } from 'models/auth/userPermissions'
-import { User } from 'models/auth/user'
 import sequelize from 'config/index'
+
+import { Permission } from 'models/auth/permission'
+import { User } from 'models/auth/user'
+import { UserPermissions } from 'models/auth/userPermissions'
+
+import { PERMISSION_SUPER_ADMIN, PERMISSIONS_ALL } from 'constants/permissions'
 
 sequelize.addModels([User, Permission, UserPermissions])
 

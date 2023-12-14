@@ -1,10 +1,8 @@
-// Configs
 import sequelize from 'config/index'
 
-// Models
-import { User } from 'models/auth/user'
-import { Token } from 'models/auth/token'
 import { Permission } from 'models/auth/permission'
+import { Token } from 'models/auth/token'
+import { User } from 'models/auth/user'
 import { UserPermissions } from 'models/auth/userPermissions'
 import { Message } from 'models/chat/message'
 import { Room } from 'models/chat/room'

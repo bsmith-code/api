@@ -6,6 +6,7 @@ import {
   loginUser,
   logoutUser,
   registerUser,
+  sendErrorEmail,
   updateUser,
   verifyUser
 } from 'controllers/auth/user'
@@ -23,3 +24,4 @@ userPublicRouter.post('/register', validateRegisterUser(), registerUser)
 userProtectedRouter.get('/session', getUserSession)
 userProtectedRouter.get('/users', getUsers)
 userProtectedRouter.put('/users/:userId', updateUser)
+userProtectedRouter.post('/error', sendErrorEmail)

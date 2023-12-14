@@ -20,9 +20,13 @@ export class Room extends Model {
   @Column(DataType.UUID)
   id!: string
 
-  @AllowNull(true)
+  @AllowNull(false)
   @Column(DataType.STRING)
   name!: string
+
+  @AllowNull(false)
+  @Column(DataType.STRING)
+  description!: string
 
   @BelongsToMany(() => User, {
     through: { model: () => RoomMembers },

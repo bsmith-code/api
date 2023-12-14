@@ -16,7 +16,19 @@ import { IRequest, IUserClient, IUserServer, TUserCreate } from 'types'
 
 type TUserResponse = Response<Partial<IUserClient> | { message: string }>
 
-export const sendVerificationEmail = async ({ id, email }: IUserClient) => {
+export const sendVerificationEmail = async ({
+  id,
+  email,
+  searchParams
+}: {
+  id: string
+  email: string
+  searchParams: string
+}) => {
+  const preparedParams = searchParams
+    ? `${searchParams}&verifyUser=${id}`
+    : `?verifyUser=${id}`
+
   const mailData = {
     from: `noreply@brianmmatthewsmith.com`,
     to: email,
@@ -24,11 +36,44 @@ export const sendVerificationEmail = async ({ id, email }: IUserClient) => {
     html: `
       <a href="${
         process.env?.ENV_AUTH_BASE_URL ?? ''
-      }?verifyUser=${id}" target="_blank">Verify Email</a>
+      }${preparedParams}" target="_blank">Verify Email</a>
     `
   }
 
   await transporter.sendMail(mailData)
+}
+
+export const sendErrorEmail = async (
+  req: IRequest<{
+    host: string
+    name: string
+    message: string
+    stack?: string
+  }>,
+  res: Response
+) => {
+  try {
+    const {
+      body: { host, name, message, stack = '' }
+    } = req
+
+    const preparedHost = host.split('.')[0]
+    const mailData = {
+      from: 'noreply@brianmatthewsmith.com',
+      to: 'brian@brianmatthewsmith.com',
+      subject: `An error occurred on ${preparedHost}`,
+      html: `
+        Name: ${name}</br>
+        Message: ${message}</br>
+        Stack: ${stack}</br>
+      `
+    }
+
+    await transporter.sendMail(mailData)
+    return res.status(200).send('OK')
+  } catch (error) {
+    return res.status(400).send({ message: (error as Error).message })
+  }
 }
 
 export const registerUser = async (
@@ -40,7 +85,8 @@ export const registerUser = async (
     validateForm(req)
 
     const {
-      body: { firstName, lastName, email, password, recaptcha }
+      body: { firstName, lastName, email, password, recaptcha },
+      headers: { 'search-params': searchParams }
     } = req
 
     transaction = await getTransaction()
@@ -60,7 +106,11 @@ export const registerUser = async (
         password: preparedPassword
       })
 
-      await sendVerificationEmail(user)
+      await sendVerificationEmail({
+        id: user.id,
+        email: user.email,
+        searchParams: searchParams as string
+      })
 
       return res.json(user)
     }
@@ -90,6 +140,7 @@ export const loginUser = async (
       where: {
         email
       },
+      include: [Permission],
       attributes: { include: ['password', 'verified'] }
     })
 
@@ -121,9 +172,10 @@ export const loginUser = async (
 
     return res.cookie('accessToken', accessToken, cookieOptions).json({
       id: user.id,
-      firstName: user.firstName,
+      email: user.email,
       lastName: user.lastName,
-      email: user.email
+      firstName: user.firstName,
+      permissions: user.permissions
     })
   } catch (error) {
     return res.status(400).send({ message: (error as Error).message })
@@ -157,7 +209,7 @@ export const getUserSession = async (req: IRequest, res: TUserResponse) => {
       locals: { userId }
     } = res
 
-    const user = await User.findByPk(userId)
+    const user = await User.findByPk(userId, { include: [Permission] })
 
     if (!user) {
       throw new Error('User not found.')
