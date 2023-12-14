@@ -5,7 +5,7 @@ import cors, { CorsOptions } from 'cors'
 import helmet from 'helmet'
 import { app, io, server } from 'server'
 
-import { connect } from 'database/index'
+import { connect } from 'database'
 
 import routes from 'routes/index'
 

@@ -3,7 +3,7 @@ import { compareSync, hashSync } from 'bcryptjs'
 import { decode, JwtPayload } from 'jsonwebtoken'
 import { Transaction } from 'sequelize'
 
-import { getTransaction } from 'database/index'
+import { getTransaction } from 'database'
 
 import { Permission } from 'models/permission'
 import { Token } from 'models/token'
