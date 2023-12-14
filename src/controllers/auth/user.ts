@@ -16,7 +16,19 @@ import { IRequest, IUserClient, IUserServer, TUserCreate } from 'types'
 
 type TUserResponse = Response<Partial<IUserClient> | { message: string }>
 
-export const sendVerificationEmail = async ({ id, email }: IUserClient) => {
+export const sendVerificationEmail = async ({
+  id,
+  email,
+  searchParams
+}: {
+  id: string
+  email: string
+  searchParams: string
+}) => {
+  const preparedParams = searchParams
+    ? `${searchParams}&verifyUser=${id}`
+    : `?verifyUser=${id}`
+
   const mailData = {
     from: `noreply@brianmmatthewsmith.com`,
     to: email,
@@ -24,7 +36,7 @@ export const sendVerificationEmail = async ({ id, email }: IUserClient) => {
     html: `
       <a href="${
         process.env?.ENV_AUTH_BASE_URL ?? ''
-      }?verifyUser=${id}" target="_blank">Verify Email</a>
+      }${preparedParams}" target="_blank">Verify Email</a>
     `
   }
 
@@ -73,7 +85,8 @@ export const registerUser = async (
     validateForm(req)
 
     const {
-      body: { firstName, lastName, email, password, recaptcha }
+      body: { firstName, lastName, email, password, recaptcha },
+      headers: { 'search-params': searchParams }
     } = req
 
     transaction = await getTransaction()
@@ -93,7 +106,11 @@ export const registerUser = async (
         password: preparedPassword
       })
 
-      await sendVerificationEmail(user)
+      await sendVerificationEmail({
+        id: user.id,
+        email: user.email,
+        searchParams: searchParams as string
+      })
 
       return res.json(user)
     }
