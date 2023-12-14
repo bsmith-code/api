@@ -33,6 +33,6 @@ export class Message extends Model {
   @Column(DataType.TEXT)
   message!: string
 
-  @BelongsTo(() => User, 'userId')
+  @BelongsTo(() => User)
   user!: User
 }

@@ -9,6 +9,7 @@ import {
   Table
 } from 'sequelize-typescript'
 
+import { Message } from 'models/message'
 import { RoomMembers } from 'models/roomMembers'
 import { User } from 'models/user'
 
@@ -27,11 +28,4 @@ export class Room extends Model {
   @AllowNull(false)
   @Column(DataType.STRING)
   description!: string
-
-  @BelongsToMany(() => User, {
-    through: { model: () => RoomMembers },
-    foreignKey: 'roomId',
-    otherKey: 'userId'
-  })
-  members!: User[]
 }

@@ -16,6 +16,4 @@ export class RoomMembers extends Model {
 
   @BelongsTo(() => Room)
   room?: Room
-
-  static primaryKeyAttributes = ['userId', 'roomId'] as const
 }
