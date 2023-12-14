@@ -8,7 +8,7 @@
       "constants/*": ["./constants/*"],
       "controllers/*": ["./controllers/*"],
       "database/*": ["./database/*"],
-      "helpers/*": ["./helpers/*"],
+      "utils/*": ["./utils/*"],
       "middleware/*": ["./middleware/*"],
       "models/*": ["./models/*"],
       "routes/*": ["./routes/*"],
