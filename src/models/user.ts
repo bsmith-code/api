@@ -55,11 +55,4 @@ export class User extends Model {
     otherKey: 'permissionId'
   })
   permissions!: Permission[]
-
-  @BelongsToMany(() => Room, {
-    through: { model: () => RoomMembers },
-    foreignKey: 'userId',
-    otherKey: 'roomId'
-  })
-  rooms!: Room[]
 }

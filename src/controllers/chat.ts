@@ -16,8 +16,12 @@ export const getUserRooms = async (req: IRequest, res: Response) => {
       locals: { userId }
     } = res
 
-    const self = await User.findByPk(userId, { include: [Room] })
-    const rooms = self?.rooms ?? []
+    const self = await RoomMembers.findAll({
+      where: { userId },
+      include: [Room]
+    })
+
+    const rooms = self.map(({ room }) => room as Room)
 
     const preparedRooms = await Promise.all(
       rooms
