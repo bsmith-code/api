@@ -8,12 +8,12 @@ export class RoomMembers extends Model {
   @ForeignKey(() => User)
   userId!: string
 
-  @BelongsTo(() => User, { onUpdate: 'CASCADE', onDelete: 'CASCADE' })
+  @BelongsTo(() => User)
   user?: User
 
   @ForeignKey(() => Room)
   roomId!: string
 
-  @BelongsTo(() => Room, { onUpdate: 'CASCADE', onDelete: 'CASCADE' })
+  @BelongsTo(() => Room)
   room?: Room
 }
