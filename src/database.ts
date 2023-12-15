@@ -8,19 +8,22 @@ import { Token } from 'models/token'
 import { User } from 'models/user'
 import { UserPermissions } from 'models/userPermissions'
 
+export const addModels = () => {
+  sequelize.addModels([
+    User,
+    Token,
+    Permission,
+    UserPermissions,
+    Message,
+    Room,
+    RoomMembers
+  ])
+}
+
 export const connect = async () => {
   try {
     await sequelize.authenticate()
-
-    sequelize.addModels([
-      User,
-      Token,
-      Permission,
-      UserPermissions,
-      Message,
-      Room,
-      RoomMembers
-    ])
+    addModels()
     await sequelize.sync({ force: false, alter: true })
 
     console.log('Database connection established.')

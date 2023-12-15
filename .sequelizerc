@@ -1,11 +1,11 @@
 const path = require('path');
 const tsConfigPaths = require('tsconfig-paths');
 
+
 require('ts-node').register({
   project: './tsconfig.json'
 })
 
-// const { paths } = require('./tsconfig.json').compilerOptions;
 
 // Register path mappings with tsconfig-paths
 tsConfigPaths.register({
@@ -14,8 +14,9 @@ tsConfigPaths.register({
     "config/*": ["./config/*"],
     "constants/*": ["./constants/*"],
     "controllers/*": ["./controllers/*"],
-    "database/*": ["./database/*"],
-    "helpers/*": ["./helpers/*"],
+    "database": ["./database"],
+    "server": ["./server"],
+    "utils/*": ["./utils/*"],
     "middleware/*": ["./middleware/*"],
     "models/*": ["./models/*"],
     "routes/*": ["./routes/*"],

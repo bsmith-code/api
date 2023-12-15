@@ -1,12 +1,11 @@
-import sequelize from 'config/index'
+import { addModels } from 'database'
 
 import { Permission } from 'models/permission'
 import { User } from 'models/user'
-import { UserPermissions } from 'models/userPermissions'
 
 import { PERMISSION_SUPER_ADMIN, PERMISSIONS_ALL } from 'constants/permissions'
 
-sequelize.addModels([User, Permission, UserPermissions])
+addModels()
 
 export = {
   up: async () => {
