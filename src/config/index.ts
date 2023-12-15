@@ -5,7 +5,8 @@ const config: SequelizeOptions = {
   username: process.env.ENV_DB_USER,
   password: process.env.ENV_DB_PASSWORD,
   host: process.env.ENV_DB_HOST,
-  dialect: 'mysql'
+  dialect: 'mysql',
+  logging: true
 }
 
 export const local = config
