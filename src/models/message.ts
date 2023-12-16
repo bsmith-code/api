@@ -33,9 +33,9 @@ export class Message extends Model {
   @Column(DataType.TEXT)
   message!: string
 
-  @BelongsTo(() => Room)
+  @BelongsTo(() => Room, { onUpdate: 'CASCADE', onDelete: 'CASCADE' })
   room!: Room
 
-  @BelongsTo(() => User)
+  @BelongsTo(() => User, { onUpdate: 'CASCADE', onDelete: 'CASCADE' })
   user!: User
 }

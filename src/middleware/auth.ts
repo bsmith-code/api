@@ -1,16 +1,12 @@
-// Common
 import { NextFunction, Response } from 'express'
 import { body } from 'express-validator'
 import dayjs from 'dayjs'
 import { decode, JwtPayload, verify } from 'jsonwebtoken'
 
-// Models
 import { Token } from 'models/token'
 
-// Utils
 import { cookieOptions, signAccessToken } from 'utils/auth'
 
-// Constants
 import {
   FORM_CAPTCHA,
   FORM_EMAIL,
@@ -19,7 +15,6 @@ import {
   FORM_PASSWORD
 } from 'constants/forms'
 
-// Types
 import { IRequest } from 'types'
 
 const tokenSecret = process.env.ENV_TOKEN_SECRET ?? ''
@@ -73,10 +68,14 @@ export const validateAndRefreshToken = async (
 
   const { userId, exp } = decode(accessToken) as JwtPayload
 
+  if (!exp || Number.isNaN(exp)) {
+    return res.status(401).send({ message: 'Invalid exp.' })
+  }
+
   res.locals.userId = userId
 
   try {
-    if (dayjs().isAfter(exp)) {
+    if (dayjs().isAfter(dayjs.unix(exp))) {
       const token = await Token.findOne({ where: { userId } })
       verify(token?.refreshToken ?? '', tokenSecret)
 
@@ -86,8 +85,6 @@ export const validateAndRefreshToken = async (
       verify(accessToken, tokenSecret)
     }
   } catch (error) {
-    // TODO: Logout
-
     const { message } = error as Error
     return res.status(401).send({ message })
   }
