@@ -2,11 +2,13 @@ import {
   AllowNull,
   BelongsToMany,
   Column,
+  CreatedAt,
   DataType,
   Default,
   Model,
   PrimaryKey,
-  Table
+  Table,
+  UpdatedAt
 } from 'sequelize-typescript'
 
 import { RoomMembers } from 'models/roomMembers'
@@ -27,6 +29,12 @@ export class Room extends Model {
   @AllowNull(false)
   @Column(DataType.STRING)
   description!: string
+
+  @CreatedAt
+  createdAt!: Date
+
+  @UpdatedAt
+  updatedAt!: Date
 
   @BelongsToMany(() => User, {
     through: { model: () => RoomMembers },

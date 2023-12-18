@@ -1,4 +1,5 @@
 import { Response } from 'express'
+import dayjs from 'dayjs'
 import { io } from 'server'
 
 import { Message } from 'models/message'
@@ -21,8 +22,8 @@ export const getUserRooms = async (req: IRequest, res: Response) => {
 
     const preparedRooms = await Promise.all(
       rooms
-        .sort((a, b) => b.createdAt - a.createdAt)
-        .map(async ({ id, name, description }) => {
+        .sort((a, b) => dayjs(b.createdAt).unix() - dayjs(a.createdAt).unix())
+        .map(async ({ id, name, description, updatedAt }) => {
           const message =
             (await Message.findOne({
               where: { roomId: id },
