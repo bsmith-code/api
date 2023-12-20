@@ -33,6 +33,10 @@ export class Message extends Model {
   @Column(DataType.TEXT)
   message!: string
 
+  @Default(false)
+  @Column(DataType.BOOLEAN)
+  isCommand!: boolean
+
   @BelongsTo(() => Room, { onUpdate: 'CASCADE', onDelete: 'CASCADE' })
   room!: Room
 

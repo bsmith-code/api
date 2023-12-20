@@ -199,7 +199,7 @@ export const createMessage = async (req: IRequest<Message>, res: Response) => {
       locals: { userId }
     } = res
     const {
-      body: { message, roomId }
+      body: { message, roomId, isCommand }
     } = req
 
     if (!roomId) {
@@ -218,7 +218,12 @@ export const createMessage = async (req: IRequest<Message>, res: Response) => {
       throw new Error('Message is required.')
     }
 
-    const newMessage = await Message.create({ message, roomId, userId })
+    const newMessage = await Message.create({
+      message,
+      roomId,
+      userId,
+      isCommand
+    })
     const createdMessage = await Message.findByPk(newMessage.id, {
       include: [User]
     })
